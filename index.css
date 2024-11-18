@@ -141,6 +141,12 @@ footer {
 
 
 @media only screen and (max-width: 1000px) {
+
+    logo {
+        width: 12rem;
+        margin-top: 2rem;
+    }
+
     .container {
         margin-top: 4rem;
         width: 80%;

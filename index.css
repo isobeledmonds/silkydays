@@ -98,9 +98,7 @@ input {
       blink-caret .75s step-end infinite;
 }
 
-#input1 {
 
-}
 
 button {
     color: #4f3325;
@@ -135,6 +133,22 @@ footer {
     font-size: 0.75rem; /* 0.75rem is 12px */
     align-items: center;
     bottom: 0;
-    position: relative;
     margin-top: 2rem;
+}
+
+
+
+
+
+
+
+@media only screen and (max-width: 900px) {
+    .container {
+        margin-top: 4rem;
+        width: 80%;
+    }
+
+    footer {
+        position: absolute;
+    }
 }

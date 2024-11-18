@@ -140,9 +140,9 @@ footer {
 
 
 
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 980px) {
 
-    logo {
+    .logo {
         width: 12rem;
         margin-top: 2rem;
     }
@@ -152,9 +152,25 @@ footer {
         width: 80%;
     }
 
+    .content {
+        width: 90%;
+    }
+    
+
     .info-collection {
         margin-top: 5rem;
         width: 70%;
+    }
+
+    input {
+        height: 3rem;
+
+    }
+
+    .gdpr {
+        font-size: 0.85rem;
+        width: auto;
+        margin-top: 2rem;
     }
 
     footer {

@@ -1,0 +1,143 @@
+@font-face {
+    font-family: 'The Seasons';
+    src: url('./resources/the-seasons/Fontspring-DEMO-theseasons-reg.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'The Seasons Italic';
+    src: url('./resources/the-seasons/Fontspring-DEMO-theseasons-it.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'The Seasons Bold';
+    src: url('./resources/the-seasons/Fontspring-DEMO-theseasons-bd.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Joliet';
+    src: url('./resources/joliet/Joliet-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+body {
+    background-image: url(./resources/background_v2.jpg);;
+    background-size: 130%;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100%;
+    margin-left: -5rem;
+    color: #4f3325;
+    background-size: fill;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+
+.logo {
+    width: 9rem;
+    margin-left: 2rem;
+}
+
+.container{
+    display: flex;
+    width: 60%;
+    justify-content: center;
+    margin: auto;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: -1rem;
+    color: #4f3325;
+}
+
+.title {
+    font-family: 'Joliet';
+    font-size: 12rem;
+}
+
+.content {
+    font-family: 'The Seasons Italic';
+    margin-top: 2rem;
+    font-size: 2rem;
+    line-height: 4rem;
+}
+
+.info-collection{
+    margin-top: 3rem;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 50%;
+}
+
+input {
+    opacity: 50%;
+    border-radius: 2rem;
+    width: 75%;
+    height: 2.75rem;
+    margin-bottom: 2.5rem;
+    border: 0.15rem solid #4f3325;
+    padding-left: 1.5rem;
+    font-size: 1.15rem;
+    font-family: 'The Seasons';
+    letter-spacing: .1em; /* Adjust as needed */
+    animation: 
+      typing 3.5s steps(40, end),
+      blink-caret .75s step-end infinite;
+}
+
+#input1 {
+
+}
+
+button {
+    color: #4f3325;
+    border-radius: 1.5rem;
+    width: 35%;
+    height: 2rem;
+    font-family: 'The Seasons Bold';
+    font-size: 0.9rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(255, 255, 255,0.85);
+    opacity: 80%;
+    border: 0.15rem solid #4f3325;
+}
+
+.gdpr {
+    margin-top: 1rem;
+    font-size: 0.7rem;
+    font-style: italic;
+
+}
+
+footer {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 2rem; /* 1rem is 16px, 2rem is 32px */
+    color:#4f3325;
+    font-size: 0.75rem; /* 0.75rem is 12px */
+    align-items: center;
+    bottom: 0;
+    position: relative;
+    margin-top: 2rem;
+}

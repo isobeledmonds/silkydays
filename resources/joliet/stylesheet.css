@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Joliet';
+    src: url('Joliet-Regular.eot');
+    src: local('Joliet Regular'), local('Joliet-Regular'),
+        url('Joliet-Regular.eot?#iefix') format('embedded-opentype'),
+        url('Joliet-Regular.woff2') format('woff2'),
+        url('Joliet-Regular.woff') format('woff'),
+        url('Joliet-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

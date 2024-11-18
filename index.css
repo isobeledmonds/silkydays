@@ -146,6 +146,11 @@ footer {
         width: 80%;
     }
 
+    .info-collection {
+        margin-top: 5rem;
+        width: 70%;
+    }
+
     footer {
         position: absolute;
     }

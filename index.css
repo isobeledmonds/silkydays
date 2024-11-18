@@ -33,17 +33,14 @@
 
 body {
     background-image: url(./resources/background_v2.jpg);;
-    background-size: 130%;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 100%;
     margin-left: -5rem;
     color: #4f3325;
-    background-size: fill;
 }
 
 html, body {
-    height: 100%;
     margin: 0;
 }
 

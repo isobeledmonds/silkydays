@@ -140,7 +140,7 @@ footer {
 
 
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 900px) {
 
     logo {
         width: 12rem;
@@ -159,6 +159,6 @@ footer {
 
     footer {
         position: absolute;
-        font-size: 1rem;
+        font-size: 1.25rem;
     }
 }

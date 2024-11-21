@@ -1,7 +1,7 @@
 const express = require("express");
 const serverless = require("serverless-http");
 const bodyParser = require("body-parser");
-const { saveDataToGoogleSheets } = require("../authflow");
+const { saveDataToGoogleSheets } = require("./authflow");
 
 const app = express();
 app.use(bodyParser.json());

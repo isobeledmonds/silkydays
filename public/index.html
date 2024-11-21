@@ -1,42 +1,38 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="./index.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
+    <script defer src="submission.js"></script>
     <link rel="icon" type="img" href="./resources/sd_logo_block.png">
+    <title>Silky Days</title>
 </head>
 
 <body>
 <header>
     <img class="logo" src="./resources/sd_logo_transparent.png">
-        
 </header>
 
 <div class="container">
-    <div class="title">
-        Silky Days
-    </div>
+    <div class="title">Silky Days</div>
     <div class="content">
         Be the first to protect your hair<br>
         Sign up for 15% off your Silky Days Helmet Insert
     </div>
     <div class="info-collection">
-        <input id="input1"
-        type="text"
-        placeholder="name">
-        <input id="input2"
-        type="text"
-        placeholder="email address">
-        <button>Get notified first</button>
+        <input id="firstName" class="first" type="text" placeholder="First name" required>
+        <input id="lastName" class="last" type="text" placeholder="Last name" required>
+        <input id="email" class="email" type="email" placeholder="Email address" required>
+        <button id="submitButton" class="enter-button">Get notified first</button>
         <div class="gdpr">
             <p>By entering your email, you agree to it being stored by a third party.<br> Your data won't be shared outside this, and you'll be subscribed to the Silky Days mailing list.</p>
         </div>
     </div>
-
 </div>
 
 <footer>
-
     <p>© 2024 Silky Days  |  All rights reserved</p> 
-
 </footer>
 
 </body>

@@ -1,115 +1,79 @@
-require("dotenv").config();
-const { google } = require("googleapis");
-const fs = require("fs");
-const path = require("path");
+const { google } = require('googleapis');
+const { OAuth2 } = google.auth;
 
-// File paths for storing tokens
-const TOKEN_PATH = path.join(__dirname, "token.json");
-const CREDENTIALS_PATH = path.join(__dirname, "credentials.json");
+// Environment variables for credentials (to be set in Netlify's dashboard)
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URIS = process.env.REDIRECT_URIS;  // If applicable
 
-// Load client credentials
-const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, "utf8"));
-const { client_id, client_secret, redirect_uris } = credentials.installed;
+// Check if credentials are set properly
+if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URIS) {
+    throw new Error('Missing required environment variables for Google OAuth.');
+}
 
-// Initialize OAuth2 client
-const oAuth2Client = new google.auth.OAuth2(
-    client_id,
-    client_secret,
-    redirect_uris[0]
+// OAuth2 Client setup
+const oauth2Client = new OAuth2(
+    CLIENT_ID,
+    CLIENT_SECRET,
+    REDIRECT_URIS // This should match the redirect URI you set in the Google Cloud Console
 );
 
-/**
- * Get a new token if the current token is expired or missing.
- */
-const getNewToken = () => {
-    const authUrl = oAuth2Client.generateAuthUrl({
-        access_type: "offline",
-        scope: ["https://www.googleapis.com/auth/spreadsheets"],
+// Function to generate authentication URL
+function generateAuthUrl() {
+    const scopes = [
+        'https://www.googleapis.com/auth/spreadsheets',  // For accessing Google Sheets
+        // Add other required scopes here
+    ];
+
+    const authUrl = oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: scopes,
     });
 
-    console.log("Authorize this app by visiting this URL:", authUrl);
+    return authUrl;
+}
 
-    const readline = require("readline").createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
-
-    readline.question("Enter the code from that page here: ", (code) => {
-        readline.close();
-        oAuth2Client.getToken(code, (err, token) => {
-            if (err) {
-                console.error("Error retrieving access token", err);
-                return;
-            }
-            saveOAuthTokens(token);
-            console.log("Token stored to", TOKEN_PATH);
-        });
-    });
-};
-
-/**
- * Save OAuth tokens to file.
- * @param {object} token
- */
-const saveOAuthTokens = (token) => {
+// Function to get the access token
+async function getAccessToken(code) {
     try {
-        fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
-        oAuth2Client.setCredentials(token);
+        const { tokens } = await oauth2Client.getToken(code);
+        oauth2Client.setCredentials(tokens);
+        return tokens;
     } catch (error) {
-        console.error("Error saving OAuth tokens:", error);
+        console.error('Error getting access token:', error);
+        throw new Error('Failed to get access token');
     }
-};
+}
 
-/**
- * Load tokens from file or fetch new ones if needed.
- */
-const setOAuthTokens = () => {
+// Function to save data to Google Sheets
+async function saveDataToGoogleSheets(data) {
     try {
-        if (fs.existsSync(TOKEN_PATH)) {
-            const token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf8"));
-            oAuth2Client.setCredentials(token);
+        // Assuming Google Sheets API is already set up
+        const sheets = google.sheets({ version: 'v4', auth: oauth2Client });
 
-            // Refresh token if expired
-            oAuth2Client.on("tokens", (newToken) => {
-                if (newToken.refresh_token) {
-                    saveOAuthTokens(newToken);
-                }
-            });
-        } else {
-            getNewToken();
-        }
-    } catch (error) {
-        console.error("Error setting OAuth tokens:", error);
-    }
-};
+        // Your Google Sheet ID and range (you will need to replace these with actual values)
+        const spreadsheetId = process.env.SPREADSHEET_ID;  // Set this as an environment variable
+        const range = 'Sheet1!A2:C'; // Example range to add data
 
-/**
- * Save data to Google Sheets.
- * @param {object} data - The data object containing firstName, lastName, and email.
- */
-const saveDataToGoogleSheets = async (data) => {
-    try {
-        const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
-        const spreadsheetId = process.env.SPREADSHEET_ID;
-
-        const values = [[data.firstName, data.lastName, data.email]];
-        const resource = { values };
-
-        await sheets.spreadsheets.values.append({
+        const request = {
             spreadsheetId,
-            range: "Sheet1!A2", // Adjust range as needed
-            valueInputOption: "RAW",
-            resource,
-        });
+            range,
+            valueInputOption: 'RAW',
+            resource: {
+                values: [[data.firstName, data.lastName, data.email]], // Example data format
+            },
+        };
 
-        console.log("Data saved to Google Sheets:", values);
+        const response = await sheets.spreadsheets.values.append(request);
+        console.log('Data saved:', response.data);
     } catch (error) {
-        console.error("Error saving data to Google Sheets:", error);
-        throw new Error("Failed to save data.");
+        console.error('Error saving data to Google Sheets:', error);
+        throw new Error('Failed to save data to Google Sheets');
     }
+}
+
+module.exports = {
+    generateAuthUrl,
+    getAccessToken,
+    saveDataToGoogleSheets,
 };
-
-// Initialize OAuth tokens
-setOAuthTokens();
-
-module.exports = { saveDataToGoogleSheets };

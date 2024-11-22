@@ -3,13 +3,14 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-      "build": "echo 'No build step for this project'",
-      "start": "netlify dev"
+        "build": "echo 'No build step for this project'",
+        "start": "netlify dev"
     },
     "dependencies": {
-      "@googleapis/sheets": "^2.0.0"
+        "@googleapis/sheets": "^2.0.0",
+        "dotenv": "^16.4.5"
     },
     "devDependencies": {
-      "netlify-cli": "^17.0.0"
+        "netlify-cli": "^17.0.0"
     }
-  }
+}

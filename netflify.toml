@@ -1,6 +1,6 @@
 [build]
   command = "npm install"
-  publish = "public"  # Specify the folder where the built static files (like index.html) reside
+  publish = "."  # Specify the folder where the built static files (like index.html) reside
   functions = "functions"  # This points to your Netlify functions folder
 
 [[redirects]]

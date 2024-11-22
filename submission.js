@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // Send data to backend
-            const response = await fetch("/api/saveData", {
+            const response = await fetch("/.netlify/functions/saveData", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ firstName, lastName, email }),

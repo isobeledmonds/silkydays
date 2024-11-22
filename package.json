@@ -1,0 +1,15 @@
+{
+    "name": "silkydays",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+      "build": "echo 'No build step for this project'",
+      "start": "netlify dev"
+    },
+    "dependencies": {
+      "@googleapis/sheets": "^2.0.0"
+    },
+    "devDependencies": {
+      "netlify-cli": "^17.0.0"
+    }
+  }

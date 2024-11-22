@@ -1,25 +1,38 @@
-const express = require("express");
-const serverless = require("serverless-http");
-const bodyParser = require("body-parser");
 const { saveDataToGoogleSheets } = require("./authflow");
 
-const app = express();
-app.use(bodyParser.json());
+exports.handler = async function(event, context) {
+    if (event.httpMethod === "POST") {
+        try {
+            // Parse the incoming data
+            const { firstName, lastName, email } = JSON.parse(event.body);
 
-app.post("/saveData", async (req, res) => {
-    try {
-        const { firstName, lastName, email } = req.body;
+            // Validate data
+            if (!firstName || !lastName || !email) {
+                return {
+                    statusCode: 400,
+                    body: JSON.stringify({ error: "Missing required fields" })
+                };
+            }
 
-        if (!firstName || !lastName || !email) {
-            return res.status(400).json({ error: "Missing required fields" });
+            // Call the function to save data to Google Sheets
+            await saveDataToGoogleSheets({ firstName, lastName, email });
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: "Data saved successfully" })
+            };
+        } catch (error) {
+            console.error("Error saving data:", error.message);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ error: "Failed to save data" })
+            };
         }
-
-        await saveDataToGoogleSheets({ firstName, lastName, email });
-        res.status(200).json({ message: "Data saved successfully" });
-    } catch (error) {
-        console.error("Error saving data:", error.message);
-        res.status(500).json({ error: "Failed to save data" });
+    } else {
+        // If not a POST request
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: "Method Not Allowed" })
+        };
     }
-});
-
-module.exports.handler = serverless(app);
+};

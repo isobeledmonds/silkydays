@@ -1,38 +1,37 @@
-const { saveDataToGoogleSheets } = require("./authflow");
+const express = require('express');
+const serverless = require('serverless-http');
+const bodyParser = require('body-parser');
+const { saveDataToGoogleSheets } = require('./authflow');  // Import the save function from authflow.js
 
-exports.handler = async function(event, context) {
-    if (event.httpMethod === "POST") {
-        try {
-            // Parse the incoming data
-            const { firstName, lastName, email } = JSON.parse(event.body);
+// Create an instance of express
+const app = express();
 
-            // Validate data
-            if (!firstName || !lastName || !email) {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: "Missing required fields" })
-                };
-            }
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
 
-            // Call the function to save data to Google Sheets
-            await saveDataToGoogleSheets({ firstName, lastName, email });
+// Define the /saveData endpoint
+app.post('/saveData', async (req, res) => {
+    // Extract first name, last name, and email from the request body
+    const { firstName, lastName, email } = req.body;
 
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ message: "Data saved successfully" })
-            };
-        } catch (error) {
-            console.error("Error saving data:", error.message);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ error: "Failed to save data" })
-            };
-        }
-    } else {
-        // If not a POST request
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ error: "Method Not Allowed" })
-        };
+    // Check if all required fields are provided
+    if (!firstName || !lastName || !email) {
+        return res.status(400).json({ error: 'Missing required fields' });
     }
-};
+
+    try {
+        // Call the function to save the data to Google Sheets
+        await saveDataToGoogleSheets({ firstName, lastName, email });
+
+        // Respond with success message
+        res.status(200).json({ message: 'Data saved successfully' });
+    } catch (error) {
+        console.error('Error saving data:', error.message);
+
+        // Handle error and respond with failure message
+        res.status(500).json({ error: 'Failed to save data' });
+    }
+});
+
+// Export the handler function for serverless deployment
+module.exports.handler = serverless(app);

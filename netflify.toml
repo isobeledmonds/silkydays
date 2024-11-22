@@ -1,17 +1,16 @@
 [build]
-  command = "npm install && npm run build" 
-  publish = "public" 
-  functions = "functions"
+  publish = "public"  # Specify the folder where the built static files (like index.html) reside
+  functions = "functions"  # This points to your Netlify functions folder
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200
+  status = 200  # Redirect all requests to index.html (for SPA)
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "/.netlify/functions/:splat"  # Redirect API requests to Netlify functions
   status = 200
 
 [dev]
-  port = 5000
+  port = 5000  # Custom dev server port, ensure no conflicts

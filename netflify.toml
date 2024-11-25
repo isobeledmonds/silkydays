@@ -3,6 +3,9 @@
   publish = "."  # Specify the folder where the built static files (like index.html) reside
   functions = "functions"  # This points to your Netlify functions folder
 
+  [functions]
+  directory = "netlify/functions"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -35,3 +35,13 @@ app.post('/saveData', async (req, res) => {
 
 // Export the handler function for serverless deployment
 module.exports.handler = serverless(app);
+
+return {
+    statusCode: 200,
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+    },
+    body: JSON.stringify({ message: "Success" }),
+};

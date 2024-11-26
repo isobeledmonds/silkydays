@@ -12,7 +12,12 @@
     "packageJson": {
       "dependencies": [
         "npm:@googleapis/sheets@^2.0.0",
-        "npm:netlify-cli@^17.0.0"
+        "npm:dotenv@^16.4.5",
+        "npm:express@^4.21.1",
+        "npm:googleapis@^144.0.0",
+        "npm:netlify-cli@^17.0.0",
+        "npm:node-fetch@^3.3.2",
+        "npm:serverless-http@^3.2.0"
       ]
     }
   }

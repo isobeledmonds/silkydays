@@ -16,26 +16,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            // Send data to backend
+            // Send data to serverless function
             const response = await fetch("/.netlify/functions/saveData", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ firstName, lastName, email }),
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                alert("Thank you! Your information has been saved.");
+                alert(data.message || "Data submitted successfully!");
                 // Optionally clear the form
                 document.getElementById("firstName").value = "";
                 document.getElementById("lastName").value = "";
                 document.getElementById("email").value = "";
             } else {
-                const errorData = await response.json();
-                alert(`Failed to save data: ${errorData.error || "Unknown error"}`);
+                alert(`Error: ${data.error || "Unknown error occurred"}`);
             }
         } catch (error) {
             console.error("Error submitting data:", error);
-            alert("An error occurred while submitting your data. Please try again.");
+            alert("An unexpected error occurred. Please try again.");
         }
     });
 });

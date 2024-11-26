@@ -1,20 +1,16 @@
 [build]
-  command = "npm install"
-  publish = "."  # Specify the folder where the built static files (like index.html) reside
-  functions = "functions"  # This points to your Netlify functions folder
-
-  [functions]
-  directory = "netlify/functions"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200  # Redirect all requests to index.html (for SPA)
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"  # Redirect API requests to Netlify functions
-  status = 200
+  functions = "functions"   # Path to serverless functions
+  publish = "."             # Path to frontend assets (adjust if assets are in a subfolder)
+  command = ""              # Leave empty for static sites or specify build commands
 
 [dev]
-  port = 5000  # Custom dev server port, ensure no conflicts
+  port = 8888               # Port for local dev server
+  framework = "#static"     # Set to #static for static sites
+
+[functions]
+  node_bundler = "esbuild"  # Use esbuild for optimized functions
+
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200              # Redirect API calls to serverless functions

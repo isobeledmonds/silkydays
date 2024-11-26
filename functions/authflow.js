@@ -1,5 +1,7 @@
+require('dotenv').config({ path: '/Users/isobeledmonds/Documents/GitHub/silky_days/silkydays/.env' });
 const { google } = require("googleapis");
 const { OAuth2 } = google.auth;
+
 
 // Environment variables for Google credentials
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -10,6 +12,11 @@ const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URIS || !SPREADSHEET_ID) {
     throw new Error("Missing required environment variables for Google OAuth.");
 }
+
+console.log("CLIENT_ID:", process.env.CLIENT_ID);
+console.log("CLIENT_SECRET:", process.env.CLIENT_SECRET);
+console.log("REDIRECT_URIS:", process.env.REDIRECT_URIS);
+console.log("SPREADSHEET_ID:", process.env.SPREADSHEET_ID);
 
 // OAuth2 client setup
 const oauth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URIS);
@@ -39,4 +46,3 @@ async function saveDataToGoogleSheets(data) {
     }
 }
 
-module.exports = { saveDataToGoogleSheets };

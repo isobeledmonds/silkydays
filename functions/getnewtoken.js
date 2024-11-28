@@ -1,6 +1,5 @@
 const { google } = require('googleapis');
 const fs = require('fs');
-require('dotenv').config();
 
 const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
 
@@ -8,58 +7,46 @@ const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_U
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'];
 
-// Netlify function handler
-exports.handler = async (event, context) => {
+exports.handler = async function (event, context) {
   if (event.httpMethod === 'GET') {
-    // If it's a GET request, generate the authorization URL
-    const authUrl = oAuth2Client.generateAuthUrl({
-      access_type: 'offline',
-      scope: SCOPES,
-    });
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: 'Authorize this app by visiting the URL',
-        authUrl: authUrl,
-      }),
-    };
-  }
+    // Capture the authorization code from the query string
+    const queryParams = new URLSearchParams(event.queryStringParameters);
+    const code = queryParams.get('code');
 
-  // If it's a POST request, exchange the authorization code for tokens
-  if (event.httpMethod === 'POST') {
-    const body = JSON.parse(event.body);
-    const code = body.code; // The authorization code from the user
+    if (code) {
+      try {
+        // Exchange the authorization code for tokens
+        const { tokens } = await oAuth2Client.getToken(code);
+        oAuth2Client.setCredentials(tokens);
+        console.log('Tokens acquired:', tokens);
 
-    if (!code) {
+        // Save the refresh token to .env (locally for now, can be used securely)
+        fs.writeFileSync('.env', `REFRESH_TOKEN=${tokens.refresh_token}\n`);
+        console.log('Refresh token saved to .env file.');
+
+        // Respond to indicate success
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ message: 'Tokens acquired successfully!' }),
+        };
+      } catch (error) {
+        console.error('Error getting tokens:', error);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ message: 'Error acquiring tokens', error: error.message }),
+        };
+      }
+    } else {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Authorization code is required.' }),
-      };
-    }
-
-    try {
-      const { tokens } = await oAuth2Client.getToken(code);
-      oAuth2Client.setCredentials(tokens);
-      console.log('Tokens acquired.');
-      // Save the refresh token to a file or environment variable
-      fs.writeFileSync('.env', `REFRESH_TOKEN=${tokens.refresh_token}\n`);
-      console.log('Refresh token saved to .env file.');
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ message: 'Token generated successfully' }),
-      };
-    } catch (error) {
-      console.error('Error during token generation:', error);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Token generation failed', details: error.message }),
+        body: JSON.stringify({ message: 'No authorization code provided in the query string' }),
       };
     }
   }
 
+  // If it's not a GET request, return an error
   return {
     statusCode: 405,
-    body: JSON.stringify({ error: 'Method not allowed' }),
+    body: JSON.stringify({ message: 'Method Not Allowed' }),
   };
 };

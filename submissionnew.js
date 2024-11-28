@@ -7,7 +7,7 @@ const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhos
 
 // Validate email format
 function validateEmail(email) {
-    return email.trim() !== "" && email.includes("@") && email.includes(".");
+    return email.trim() !== "" &&  email.includes(".");
 }
 
 // Validate first name and last name

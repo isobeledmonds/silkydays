@@ -1,12 +1,6 @@
 const { google } = require('googleapis');
-const readline = require('readline');
 const fs = require('fs');
-require('dotenv').config();  // Ensure environment variables are loaded
-
-// Log environment variables to debug
-console.log('CLIENT_ID:', process.env.CLIENT_ID);
-console.log('CLIENT_SECRET:', process.env.CLIENT_SECRET);
-console.log('REDIRECT_URI:', process.env.REDIRECT_URI);
+require('dotenv').config();
 
 const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
 
@@ -14,35 +8,58 @@ const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_U
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'];
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+// Netlify function handler
+exports.handler = async (event, context) => {
+  if (event.httpMethod === 'GET') {
+    // If it's a GET request, generate the authorization URL
+    const authUrl = oAuth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: SCOPES,
+    });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: 'Authorize this app by visiting the URL',
+        authUrl: authUrl,
+      }),
+    };
+  }
 
-async function getNewToken() {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-  });
+  // If it's a POST request, exchange the authorization code for tokens
+  if (event.httpMethod === 'POST') {
+    const body = JSON.parse(event.body);
+    const code = body.code; // The authorization code from the user
 
-  console.log('Authorize this app by visiting this URL:', authUrl);
-  
-  rl.question('Enter the code from that page here: ', async (code) => {
-    rl.close();
+    if (!code) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Authorization code is required.' }),
+      };
+    }
 
     try {
       const { tokens } = await oAuth2Client.getToken(code);
       oAuth2Client.setCredentials(tokens);
       console.log('Tokens acquired.');
-      
-      const envContent = `REFRESH_TOKEN=${tokens.refresh_token}\n`;
-      fs.appendFileSync('.env', envContent);
-
+      // Save the refresh token to a file or environment variable
+      fs.writeFileSync('.env', `REFRESH_TOKEN=${tokens.refresh_token}\n`);
       console.log('Refresh token saved to .env file.');
-    } catch (error) {
-      console.error('Error during token acquisition:', error.message);
-    }
-  });
-}
 
-getNewToken();
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ message: 'Token generated successfully' }),
+      };
+    } catch (error) {
+      console.error('Error during token generation:', error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Token generation failed', details: error.message }),
+      };
+    }
+  }
+
+  return {
+    statusCode: 405,
+    body: JSON.stringify({ error: 'Method not allowed' }),
+  };
+};

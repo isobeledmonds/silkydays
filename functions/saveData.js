@@ -1,57 +1,47 @@
-const express = require("express");
-const serverless = require("serverless-http");
-const bodyParser = require("body-parser");
-const { saveDataToGoogleSheets } = require("./authflow");
+const { google } = require('googleapis');
+require('dotenv').config();
 
-// Create an instance of express
-const app = express();
+const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN, SPREADSHEET_ID } = process.env;
 
-// Middleware to parse JSON bodies
-app.use(bodyParser.json());
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-// Define the /saveData endpoint
-//app.post("/saveData", async (req, res) => {
-  //  const { firstName, lastName, email } = req.body;
+const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
 
-  //  if (!firstName || !lastName || !email) {
-  //      return res.status(400).json({ error: "Missing required fields" });
-  //  }
-
- //   try {
- //      // Save data to Google Sheets
-  //      await saveDataToGoogleSheets({ firstName, lastName, email });
-  //      res.status(200).json({ message: "Data saved successfully" });
-  //  } catch (error) {
-  //      console.error("Error saving data:", error.message);
-  //      res.status(500).json({ error: "Failed to save data" });
-  //  }
-//});
-
-exports.handler = async function(event, context) {
-    try {
-      const data = JSON.parse(event.body);
-      const { firstName, lastName, email } = data;
-  
-      // Validate input (important!)
-      if (!firstName || !lastName || !email) {
+exports.handler = async (event) => {
+    if (event.httpMethod !== 'POST') {
         return {
-          statusCode: 400,
-          body: JSON.stringify({ error: 'Missing required fields' }),
+            statusCode: 405,
+            body: 'Method Not Allowed',
         };
-      }
-  
-      // ... your code to save the data (e.g., database interaction) ...
-  
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ message: 'Data saved successfully!' }),
-      };
-    } catch (error) {
-      console.error("Error saving data:", error); // Log the error!
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Failed to save data'})
-      }}}
+    }
 
-// Export the handler for serverless deployment
-module.exports.handler = serverless(app);
+    try {
+        const { firstName, lastName, email } = JSON.parse(event.body);
+
+        // Set credentials with refresh token
+        oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+        // Add data to Google Sheets
+        const response = await sheets.spreadsheets.values.append({
+            spreadsheetId: SPREADSHEET_ID,
+            range: 'Sheet1!A1:C1', // Adjust the range if needed
+            valueInputOption: 'RAW',
+            resource: {
+                values: [
+                    [firstName, lastName, email]
+                ],
+            },
+        });
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Data saved successfully!' }),
+        };
+    } catch (error) {
+        console.error('Error saving data:', error.message);
+        return {
+            statusCode: 500,
+            body: `Error saving data: ${error.message}`,
+        };
+    }
+};

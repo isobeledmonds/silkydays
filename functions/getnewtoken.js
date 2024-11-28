@@ -1,7 +1,12 @@
 const { google } = require('googleapis');
 const readline = require('readline');
 const fs = require('fs');
-require('dotenv').config(); // To load environment variables
+require('dotenv').config();  // Ensure environment variables are loaded
+
+// Log environment variables to debug
+console.log('CLIENT_ID:', process.env.CLIENT_ID);
+console.log('CLIENT_SECRET:', process.env.CLIENT_SECRET);
+console.log('REDIRECT_URI:', process.env.REDIRECT_URI);
 
 const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
 
@@ -26,15 +31,12 @@ async function getNewToken() {
     rl.close();
 
     try {
-      // Get the token using the authorization code
       const { tokens } = await oAuth2Client.getToken(code);
       oAuth2Client.setCredentials(tokens);
-      
       console.log('Tokens acquired.');
-
-      // Save the refresh token to the .env file
+      
       const envContent = `REFRESH_TOKEN=${tokens.refresh_token}\n`;
-      fs.appendFileSync('.env', envContent); // Append to .env instead of overwrite to avoid accidental data loss
+      fs.appendFileSync('.env', envContent);
 
       console.log('Refresh token saved to .env file.');
     } catch (error) {

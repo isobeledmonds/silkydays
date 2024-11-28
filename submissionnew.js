@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // Send data to the serverless function
-            const response = await fetch("/.netlify/functions/submitData", {
+            const response = await fetch("/.netlify/functions/submit", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ firstName, lastName, email }),

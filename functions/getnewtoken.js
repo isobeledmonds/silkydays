@@ -1,71 +1,69 @@
+require('dotenv').config(); // Load environment variables from .env
+
 const { google } = require('googleapis');
+const readline = require('readline');
 
-// Get the CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, and REFRESH_TOKEN from environment variables
-const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN } = process.env;
+// Load environment variables
+const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
 
+// Log the loaded environment variables for debugging
+console.log('Loaded Environment Variables:');
+console.log('CLIENT_ID:', CLIENT_ID || 'Not defined');
+console.log('CLIENT_SECRET:', CLIENT_SECRET ? 'Loaded' : 'Not defined');
+console.log('REDIRECT_URI:', REDIRECT_URI || 'Not defined');
+
+if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI) {
+  console.error('Missing required environment variables. Please check your .env file.');
+  process.exit(1); // Exit script if environment variables are missing
+}
+
+// Create OAuth2 client
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-// SCOPES are the permissions you're requesting from the user
+// Define the required scopes
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'];
 
-// Set the credentials for the OAuth2 client using the refresh token from the environment variables
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-
-// Function to refresh the access token
-async function refreshAccessToken() {
+// Function to generate a new token
+async function getNewToken() {
   try {
-    // Attempt to refresh the access token
-    const response = await oAuth2Client.refreshAccessToken();
-    const newAccessToken = response.credentials.access_token;
+    // Generate the authorization URL
+    const authUrl = oAuth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: SCOPES,
+    });
 
-    console.log('New access token:', newAccessToken);
-    
-    // Optionally, you can return the new access token in a response or store it securely
+    // Log the authorization URL
+    console.log('Authorize this app by visiting this URL:', authUrl);
 
-    return newAccessToken;
+    // Ask the user to enter the authorization code
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    rl.question('Enter the code from that page here: ', async (code) => {
+      rl.close();
+      try {
+        // Exchange the code for tokens
+        const { tokens } = await oAuth2Client.getToken(code);
+        oAuth2Client.setCredentials(tokens);
+        console.log('Tokens acquired:', tokens);
+
+        // Log the refresh token
+        console.log('Your refresh token:', tokens.refresh_token);
+
+        // Save the refresh token to a .env file
+        const fs = require('fs');
+        fs.appendFileSync('.env', `\nREFRESH_TOKEN=${tokens.refresh_token}\n`);
+        console.log('Refresh token saved to .env file.');
+      } catch (tokenError) {
+        console.error('Error retrieving access token:', tokenError.message);
+      }
+    });
   } catch (error) {
-    console.error('Error refreshing token:', error.message);
-    return null; // Return null if there's an issue
+    console.error('Error generating authorization URL:', error.message);
   }
 }
 
-// Example of how to use the refreshed access token in an API request
-exports.handler = async function (event, context) {
-  if (event.httpMethod === 'GET') {
-    try {
-      // Refresh the access token
-      const newAccessToken = await refreshAccessToken();
-
-      if (newAccessToken) {
-        // Use the new access token to make API requests, for example:
-        oAuth2Client.setCredentials({ access_token: newAccessToken });
-
-        // Now, you can make API requests with the refreshed access token
-
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            message: 'Access token refreshed successfully!',
-            accessToken: newAccessToken,  // Optionally return the new access token
-          }),
-        };
-      } else {
-        return {
-          statusCode: 500,
-          body: JSON.stringify({ message: 'Failed to refresh access token' }),
-        };
-      }
-    } catch (error) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error in refreshing token', error: error.message }),
-      };
-    }
-  }
-
-  // If it's not a GET request, return an error
-  return {
-    statusCode: 405,
-    body: JSON.stringify({ message: 'Method Not Allowed' }),
-  };
-};
+// Run the function
+getNewToken();

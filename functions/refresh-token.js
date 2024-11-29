@@ -1,71 +1,59 @@
 const { google } = require('googleapis');
-const fs = require('fs');
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 
-const TOKEN_PATH = '/tmp/token.json'; // Temporary storage for token (this may change based on your deployment method)
-const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN } = process.env;
+// Retrieve access and refresh tokens from environment variables
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
 
-// Create OAuth2 client
+if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !ACCESS_TOKEN || !REFRESH_TOKEN) {
+    console.error("Missing required environment variables");
+    throw new Error("Ensure all environment variables are set.");
+}
+
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-// Function to initialize and set credentials
-function initializeToken() {
-    const token = {
-        refresh_token: REFRESH_TOKEN,
-        scope: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'].join(' '),
-        token_type: 'Bearer',
-        expiry_date: Date.now() + 3600 * 1000, // 1 hour expiration
-    };
-    oAuth2Client.setCredentials(token);
-    fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
-    console.log('Initialized token from environment variables and saved to /tmp/token.json');
+// Set initial credentials with the stored refresh token
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+async function refreshAccessToken() {
+    try {
+        // Attempt to refresh the access token using the stored refresh token
+        const { credentials } = await oAuth2Client.refreshAccessToken();
+        const newAccessToken = credentials.access_token;
+
+        console.log("New access token:", newAccessToken);
+
+        // You can then use the new access token to make API requests
+        // You can store this new access token in your environment variables or a secure store
+        process.env.ACCESS_TOKEN = newAccessToken;
+
+        return newAccessToken;
+    } catch (error) {
+        console.error("Failed to refresh access token:", error);
+        return null;
+    }
 }
 
-// Check if a valid token exists, otherwise create a new one
-if (fs.existsSync(TOKEN_PATH)) {
-    try {
-        const token = fs.readFileSync(TOKEN_PATH, 'utf8');
-        oAuth2Client.setCredentials(JSON.parse(token));
-        console.log('Loaded token from file:', JSON.parse(token));
-    } catch (error) {
-        console.error('Error reading token file:', error.message);
-        initializeToken();
+// Call the function to refresh the token when necessary
+async function makeApiCall() {
+    const accessToken = ACCESS_TOKEN || await refreshAccessToken();
+
+    if (!accessToken) {
+        console.error("Unable to retrieve valid access token.");
+        return;
     }
-} else {
-    console.log('Token file not found, creating from environment variables.');
-    initializeToken();
+
+    const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
+    // Make API requests with the refreshed access token
+    const response = await sheets.spreadsheets.values.get({
+        spreadsheetId: 'your-spreadsheet-id',
+        range: 'Sheet1!A1:C10',
+    });
+    console.log(response.data);
 }
 
-// Refresh the token when requested
-exports.handler = async (event) => {
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            body: 'Method Not Allowed',
-        };
-    }
-
-    try {
-        // Refresh the access token using the refresh token
-        const tokenResponse = await oAuth2Client.refreshAccessToken();
-        const newAccessToken = tokenResponse.credentials.access_token;
-
-        // Save the new token (you can persist it in a different storage as needed)
-        fs.writeFileSync(TOKEN_PATH, JSON.stringify(oAuth2Client.credentials));
-        console.log('Tokens refreshed and saved:', oAuth2Client.credentials);
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                accessToken: newAccessToken,
-                refreshToken: oAuth2Client.credentials.refresh_token || REFRESH_TOKEN,
-            }),
-        };
-    } catch (error) {
-        console.error('Error refreshing token:', error.message);
-        return {
-            statusCode: 500,
-            body: `Error refreshing token: ${error.message}`,
-        };
-    }
-};
+makeApiCall();

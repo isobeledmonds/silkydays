@@ -1,5 +1,9 @@
 const { google } = require('googleapis');
+const readline = require('readline');
+const fs = require('fs');
 const dotenv = require('dotenv');
+
+// Load environment variables
 dotenv.config();
 
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -13,61 +17,48 @@ if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI) {
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-exports.handler = async (event) => {
-    console.log("Processing event:", event);
+// Generate the authorization URL
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'];
+const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: 'offline',  // This ensures we get a refresh token
+    scope: SCOPES,
+});
 
-    if (event.httpMethod === 'GET') {
-        if (event.queryStringParameters && event.queryStringParameters.code) {
-            // Handle the authorization code from Google
-            const code = event.queryStringParameters.code;
-            console.log("Received authorization code:", code);
+console.log('Authorize this app by visiting this URL:', authUrl);
 
-            try {
-                // Exchange the authorization code for tokens
-                const { tokens } = await oAuth2Client.getToken(code);
-                console.log("Tokens acquired:", tokens);
+// Create readline interface for getting the code from the user
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-                return {
-                    statusCode: 200,
-                    body: JSON.stringify({
-                        message: "Authentication successful!",
-                        tokens,
-                    }),
-                };
-            } catch (error) {
-                console.error("Error acquiring tokens:", error);
+rl.question('Enter the code from that page here: ', async (code) => {
+    rl.close();
+    try {
+        // Get the tokens using the code
+        const { tokens } = await oAuth2Client.getToken(code);
+        console.log('Tokens acquired:', tokens);
 
-                return {
-                    statusCode: 500,
-                    body: JSON.stringify({
-                        message: "Failed to acquire tokens",
-                        error: error.message,
-                    }),
-                };
-            }
+        // Log the tokens in detail
+        console.log('Access Token:', tokens.access_token);
+        console.log('Refresh Token:', tokens.refresh_token);
+
+        // Check if a refresh token is included
+        if (tokens.refresh_token) {
+            console.log('Refresh token:', tokens.refresh_token);
+
+            // Save the refresh token to your .env file
+            fs.appendFileSync('.env', `REFRESH_TOKEN=${tokens.refresh_token}\n`);
+            console.log('Refresh token saved to .env file.');
         } else {
-            // Generate the authorization URL
-            const authUrl = oAuth2Client.generateAuthUrl({
-                access_type: 'offline',
-                scope: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'],
-            });
-
-            console.log("Generated authorization URL:", authUrl);
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify({
-                    message: "Authorize this app by visiting the URL",
-                    authUrl,
-                }),
-            };
+            console.log('No refresh token received.');
         }
-    } else {
-        console.error("Invalid HTTP method used. Only GET is allowed.");
 
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ message: "Method Not Allowed" }),
-        };
+        // Optionally, save the access token (if you want to keep it for later use)
+        fs.appendFileSync('.env', `ACCESS_TOKEN=${tokens.access_token}\n`);
+        console.log('Access token saved to .env file.');
+
+    } catch (error) {
+        console.error('Error acquiring tokens:', error);
     }
-};
+});

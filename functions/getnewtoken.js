@@ -23,6 +23,15 @@ const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_U
 // Define the required scopes
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'];
 
+exports.handler = async (event) => {
+    if (event.httpMethod !== 'GET') {
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ message: 'Method Not Allowed' }),
+      };
+    }
+}
+
 // Function to generate a new token
 async function getNewToken() {
   try {

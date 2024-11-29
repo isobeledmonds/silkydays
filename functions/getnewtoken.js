@@ -13,44 +13,61 @@ if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI) {
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'];
-
 exports.handler = async (event) => {
     console.log("Processing event:", event);
 
-    if (event.httpMethod !== 'GET') {
+    if (event.httpMethod === 'GET') {
+        if (event.queryStringParameters && event.queryStringParameters.code) {
+            // Handle the authorization code from Google
+            const code = event.queryStringParameters.code;
+            console.log("Received authorization code:", code);
+
+            try {
+                // Exchange the authorization code for tokens
+                const { tokens } = await oAuth2Client.getToken(code);
+                console.log("Tokens acquired:", tokens);
+
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify({
+                        message: "Authentication successful!",
+                        tokens,
+                    }),
+                };
+            } catch (error) {
+                console.error("Error acquiring tokens:", error);
+
+                return {
+                    statusCode: 500,
+                    body: JSON.stringify({
+                        message: "Failed to acquire tokens",
+                        error: error.message,
+                    }),
+                };
+            }
+        } else {
+            // Generate the authorization URL
+            const authUrl = oAuth2Client.generateAuthUrl({
+                access_type: 'offline',
+                scope: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'],
+            });
+
+            console.log("Generated authorization URL:", authUrl);
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify({
+                    message: "Authorize this app by visiting the URL",
+                    authUrl,
+                }),
+            };
+        }
+    } else {
         console.error("Invalid HTTP method used. Only GET is allowed.");
+
         return {
             statusCode: 405,
             body: JSON.stringify({ message: "Method Not Allowed" }),
-        };
-    }
-
-    try {
-        // Generate the authorization URL
-        const authUrl = oAuth2Client.generateAuthUrl({
-            access_type: 'offline',
-            scope: SCOPES,
-        });
-
-        console.log("Generated authorization URL:", authUrl);
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                message: "Authorize this app by visiting the URL",
-                authUrl,
-            }),
-        };
-    } catch (error) {
-        console.error("Error generating auth URL:", error);
-
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                message: "Error generating auth URL",
-                error: error.message,
-            }),
         };
     }
 };

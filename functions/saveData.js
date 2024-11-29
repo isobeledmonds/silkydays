@@ -4,7 +4,6 @@ require('dotenv').config();
 const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN, SPREADSHEET_ID } = process.env;
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-
 const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
 
 exports.handler = async (event) => {
@@ -18,17 +17,25 @@ exports.handler = async (event) => {
     try {
         const { firstName, lastName, email } = JSON.parse(event.body);
 
-        // Set credentials with refresh token
+        // Check that all required fields are provided
+        if (!firstName || !lastName || !email) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'All fields are required.' }),
+            };
+        }
+
+        // Set credentials with the refresh token
         oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-        // Add data to Google Sheets
+        // Add data to Google Sheets (appending to the next row)
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Sheet1!A1:C1', // Adjust the range if needed
+            range: 'Sheet1!A:C',  // Ensure data is appended correctly to columns A to C
             valueInputOption: 'RAW',
             resource: {
                 values: [
-                    [firstName, lastName, email]
+                    [firstName, lastName, email],  // Array for each submission
                 ],
             },
         });

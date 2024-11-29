@@ -31,7 +31,7 @@ exports.handler = async (event) => {
         // Add data to Google Sheets (appending to the next row)
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Sheet1!A:C',  // Ensure data is appended correctly to columns A to C
+            range: 'Sheet1!B2:D',  // Ensure data is appended correctly to columns A to C
             valueInputOption: 'RAW',
             resource: {
                 values: [

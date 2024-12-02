@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitButton");
+    const popup = document.getElementById("myPopup");
+    const closePopupButton = document.getElementById("closePopup");
 
     // Function to handle form submission
     async function handleSubmit(event) {
@@ -12,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Validate form data
         if (!firstName || !lastName || !email || !email.includes("@") || !email.includes(".")) {
-            alert("All fields are required and email must be valid.");
+            alert("All fields are required, and email must be valid.");
             return;
         }
 
@@ -27,11 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             if (response.ok) {
+                // Show the popup
+                popup.classList.add("show");
+
                 // Optionally clear the form
                 document.getElementById("firstName").value = "";
                 document.getElementById("lastName").value = "";
                 document.getElementById("email").value = "";
-                alert(data.message || "Data submitted successfully!");
             } else {
                 alert(`Error: ${data.error || "Unknown error occurred"}`);
             }
@@ -45,19 +49,16 @@ document.addEventListener("DOMContentLoaded", () => {
     submitButton.addEventListener("click", handleSubmit);
 
     // Add event listener for "Enter" key to trigger form submission
-    document.getElementById("firstName").addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            handleSubmit(event);
-        }
+    ["firstName", "lastName", "email"].forEach((fieldId) => {
+        document.getElementById(fieldId).addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                handleSubmit(event);
+            }
+        });
     });
-    document.getElementById("lastName").addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            handleSubmit(event);
-        }
-    });
-    document.getElementById("email").addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            handleSubmit(event);
-        }
+
+    // Add event listener to close the popup
+    closePopupButton.addEventListener("click", () => {
+        popup.classList.remove("show");
     });
 });

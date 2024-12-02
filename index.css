@@ -178,3 +178,58 @@ footer {
         font-size: 1.25rem;
     }
 }
+
+.popup .popuptext {
+    visibility: hidden;
+    opacity: 0;
+    width: 200px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: visibility 0s, opacity 0.3s ease-in-out;
+}
+
+.popup .popuptext.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.popup .popuptext .close-popup {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.popup .popuptext .close-popup:hover {
+    color: #ccc;
+}
+
+  /* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s
+  }
+  
+  /* Add animation (fade in the popup) */
+  @-webkit-keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+  
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+  }

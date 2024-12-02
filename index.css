@@ -196,7 +196,7 @@ footer {
     transition: visibility 0s, opacity 0.3s ease-in-out;
 }
 
-.popup .popuptext.show {
+.show {
     visibility: visible;
     opacity: 1;
 }

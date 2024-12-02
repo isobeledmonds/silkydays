@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Validate form data
         if (!firstName || !lastName || !email || !email.includes("@") || !email.includes(".")) {
-            alert("All fields are required, and email must be valid.");
+            alert("All fields are required and email must be valid.");
             return;
         }
 
@@ -45,20 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Add click event listener to the submit button
-    submitButton.addEventListener("click", handleSubmit);
-
-    // Add event listener for "Enter" key to trigger form submission
-    ["firstName", "lastName", "email"].forEach((fieldId) => {
-        document.getElementById(fieldId).addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                handleSubmit(event);
-            }
-        });
-    });
-
-    // Add event listener to close the popup
+    // Close popup on button click
     closePopupButton.addEventListener("click", () => {
         popup.classList.remove("show");
     });
+
+    // Add click event listener to the submit button
+    submitButton.addEventListener("click", handleSubmit);
 });

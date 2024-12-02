@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitButton");
-    const popup = document.getElementById("myPopup");
+    const popup = document.getElementsByClassName("popup");
+    const popuptext = document.getElementsByClassName("popuptext");
     const closePopupButton = document.getElementById("closePopup");
 
     // Function to handle form submission
@@ -31,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok) {
                 // Show the popup
                 popup.classList.add("show");
+                popuptext.classList.add("show");
 
                 // Optionally clear the form
                 document.getElementById("firstName").value = "";

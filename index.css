@@ -104,7 +104,7 @@ input {
 button {
     color: #4f3325;
     border-radius: 1.5rem;
-    width: 35%;
+    width: fit-content;
     height: 2rem;
     font-family: 'The Seasons Bold';
     font-size: 0.9rem;
@@ -206,4 +206,8 @@ footer {
     margin: 0;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.close-popup {
+    
 }

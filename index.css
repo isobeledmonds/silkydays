@@ -184,6 +184,8 @@ footer {
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    position: absolute;
+    width: 100%;
 }
 
 #show {
@@ -193,15 +195,15 @@ footer {
 }
 
 .popuptext {
-    width: 200px;
+    width: auto;
     background-color: #555;
     color: #fff;
     text-align: center;
     border-radius: 6px;
-    padding: 10px;
-    position: absolute;
+    padding: 6rem;
+    position: inherit;
     z-index: 1;
-    bottom: 125%;
+    margin: 0;
     left: 50%;
     transform: translateX(-50%);
 }

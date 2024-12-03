@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitButton");
-    const popup = document.getElementsByClassName("popup")[0]; // Access the first element
-    const popuptext = document.getElementsByClassName("popuptext")[0]; // Access the first element
+    const popup = document.querySelector(".popup");
+    const popuptext = document.querySelector(".popuptext");
     const closePopupButton = document.getElementById("closePopup");
 
     // Function to handle form submission
@@ -30,9 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             if (response.ok) {
-                // Show the popup and popup text
-                popup.classList.add("show");
-                popuptext.classList.add("show");
+                // Dynamically add the "show" id to both popup and popuptext
+                popup.setAttribute("id", "show");
+                popuptext.setAttribute("id", "show");
 
                 // Optionally clear the form
                 document.getElementById("firstName").value = "";
@@ -49,8 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Close popup on button click
     closePopupButton.addEventListener("click", () => {
-        popup.classList.remove("show");
-        popuptext.classList.remove("show");
+        popup.removeAttribute("id");
+        popuptext.removeAttribute("id");
     });
 
     // Add click event listener to the submit button

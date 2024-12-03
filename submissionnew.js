@@ -4,7 +4,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const popuptext = document.querySelector(".popuptext");
     const closePopupButton = document.getElementById("closePopup");
 
-    // Function to handle form submission
+    // Function to show the popup
+    function showPopup() {
+        popup.setAttribute("id", "show"); // Show popup container
+    }
+
+    // Function to hide the popup
+    function hidePopup() {
+        popup.removeAttribute("id");
+    }
+
+    // Handle form submission
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -20,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            // Send data to serverless function
+            // Simulate server response
             const response = await fetch("/.netlify/functions/saveData", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -30,11 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             if (response.ok) {
-                // Dynamically add the "show" id to both popup and popuptext
-                popup.setAttribute("id", "show");
-                popuptext.setAttribute("id", "show");
+                // Show the popup
+                showPopup();
 
-                // Optionally clear the form
+                // Clear the form
                 document.getElementById("firstName").value = "";
                 document.getElementById("lastName").value = "";
                 document.getElementById("email").value = "";
@@ -47,12 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Close popup on button click
-    closePopupButton.addEventListener("click", () => {
-        popup.removeAttribute("id");
-        popuptext.removeAttribute("id");
-    });
-
-    // Add click event listener to the submit button
+    // Event listeners
     submitButton.addEventListener("click", handleSubmit);
+    closePopupButton.addEventListener("click", hidePopup);
 });

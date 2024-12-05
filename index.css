@@ -199,7 +199,6 @@ footer {
         color: #4f3325;
         font-family: 'The Seasons Italic';
     }
-    }
 
     p.popup-top {
         padding-top: 2rem;
@@ -210,6 +209,20 @@ footer {
         /* width: 60%; */
         margin: 0 2rem;
         line-height: 3.5rem;
+    }
+
+    .button-div {
+        padding: 1.5rem;
+        justify-items: flex-end;
+        border: none;
+    }
+    
+    button#closePopup{
+        background: none;
+        border: none;
+        color: white;
+        font-size: 3rem;
+        cursor: pointer;
     }
 
 }

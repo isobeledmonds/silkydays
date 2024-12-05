@@ -115,6 +115,7 @@ button {
     background-color: rgb(255, 255, 255,0.85);
     opacity: 80%;
     border: 0.15rem solid #4f3325;
+    cursor: pointer;
 }
 
 .gdpr {
@@ -226,8 +227,11 @@ button#closePopup{
     border: none;
     color: white;
     font-size: 2.5rem;
+    cursor: pointer;
 }
 
 p.popup-bottom {
-    padding: 0 3rem 5rem 3rem;
+    padding: 3rem 3rem 8rem 3rem;
+    /* width: 60%; */
+    margin: 0 4rem;
 }

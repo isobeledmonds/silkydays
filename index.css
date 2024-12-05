@@ -179,12 +179,6 @@ footer {
         font-size: 1.25rem;
     }
 
-    .popuptext {
-        margin-top: 0;
-        width: 70%;
-        
-    }
-
     p.popup-top {
         padding-top: 2rem;
     }
@@ -194,6 +188,11 @@ footer {
         /* width: 60%; */
         margin: 0 2rem;
         line-height: 3.5rem;
+    }
+
+    div#myPopup {
+        margin-top: -20rem;
+        width: 70%;
     }
 
 }
@@ -228,7 +227,7 @@ footer {
     z-index: 1;
     /*margin: 0;*/
     left: 50%;
-    margin-top: -5rem;
+    margin-top: -6rem;
     transform: translateX(-50%);
     font-size: 2rem;
     color: #4f3325;

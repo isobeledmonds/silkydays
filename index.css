@@ -180,8 +180,25 @@ footer {
     }
 
     .popuptext {
-        margin-top: -30%;
         width: 70%;
+        background-color: lightgray;
+       /* background-size: cover;*/
+       /* background-position: center;*/
+       /* background-repeat: no-repeat;*/
+        color: #fff;
+        text-align: center;
+        border-radius: 0.5rem;
+        padding: 0;
+        position: absolute;
+        z-index: 1;
+        /*margin: 0;*/
+        left: 50%;
+        margin-top: -20rem;
+        transform: translateX(-50%);
+        font-size: 2rem;
+        color: #4f3325;
+        font-family: 'The Seasons Italic';
+    }
     }
 
     p.popup-top {

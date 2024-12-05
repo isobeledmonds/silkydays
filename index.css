@@ -175,7 +175,7 @@ footer {
     }
 
     footer {
-        position: absolute;
+       /* position: absolute;*/
         font-size: 1.25rem;
     }
 
@@ -191,7 +191,7 @@ footer {
     }
 
     div#myPopup {
-        margin-top: -20rem;
+        margin-top: 0;
         width: 70%;
     }
 
@@ -199,6 +199,7 @@ footer {
         padding: 1.5rem;
         justify-items: flex-end;
         border: none;
+    }
 
 }
 
@@ -206,7 +207,7 @@ footer {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
     position: absolute;
     width: 100%;
     z-index: 1;

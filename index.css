@@ -196,7 +196,10 @@ footer {
 
 .popuptext {
     width: auto;
-    background-color: #555;
+    background-image: url(./resources/background_v2.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: #fff;
     text-align: center;
     border-radius: 6px;

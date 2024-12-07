@@ -141,8 +141,9 @@ footer {
 
 
 
+/* Media query for screens smaller than or equal to 449px */
 @media only screen and (max-width: 449px) {
-    div#myPopup {
+    #myPopup {
         margin-top: -15%!important;
         width: 75%;
     }
@@ -150,55 +151,46 @@ footer {
         width: 12rem;
         margin-top: 2rem;
     }
-
     .container {
         margin-top: 0;
         width: 80%;
     }
-
     .content {
         width: 90%;
     }
-    
     .info-collection {
         margin-top: 5rem;
         width: 70%;
     }
-
     input {
         height: 3rem;
     }
-
     .gdpr {
         font-size: 0.85rem;
         width: auto;
         margin-top: 2rem;
     }
-
     footer {
         font-size: 1.25rem;
     }
-
     .popup-bottom {
         padding: 5% 0 12% 0;
         margin: 0 15%;
         line-height: 3.5rem;
     }
-
     .button-div {
         padding: 1.5rem;
         justify-items: flex-end;
         border: none;
     }
-
     .popup {
         top: 40%;
     }
 }
 
-
+/* Media query for screens between 450px and 980px */
 @media only screen and (min-width: 450px) and (max-width: 980px) {
-    div#myPopup {
+    #myPopup {
         margin-top: 15%;
         width: 75%;
     }
@@ -206,52 +198,42 @@ footer {
         width: 12rem;
         margin-top: 2rem;
     }
-
     .container {
         margin-top: 0;
         width: 80%;
     }
-
     .content {
         width: 90%;
     }
-
     .info-collection {
         margin-top: 5rem;
         width: 70%;
     }
-
     input {
         height: 3rem;
     }
-
     .gdpr {
         font-size: 0.85rem;
         width: auto;
         margin-top: 2rem;
     }
-
     footer {
         font-size: 1.25rem;
     }
-
     .popup-bottom {
         padding: 5% 0 12% 0;
         margin: 0 15%;
         line-height: 3.5rem;
     }
-
     .button-div {
         padding: 1.5rem;
         justify-items: flex-end;
         border: none;
     }
-
     .popup {
         top: 40%;
     }
 }
-
 
 
 .popup {

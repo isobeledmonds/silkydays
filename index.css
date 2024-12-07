@@ -179,20 +179,16 @@ footer {
         font-size: 1.25rem;
     }
 
-    p.popup-top {
-        padding-top: 2rem;
-    }
-
     p.popup-bottom {
-        padding: 3rem 3rem 8rem 2rem;
+        padding: 5% 0 14% 0;
         /* width: 60%; */
-        margin: 0 2rem;
+        margin: 0 15%;
         line-height: 3.5rem;
     }
 
     div#myPopup {
         margin-top: 0;
-        width: 70%;
+        width: 110%;
     }
 
     .button-div {
@@ -209,8 +205,10 @@ footer {
     transition: opacity 0.3s ease-in-out;
     position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
     position: absolute;
-    width: 100%;
+    width: 55%;
     z-index: 1;
+    margin-top: 45%;
+    left: 50%;
 }
 
 #show {
@@ -220,7 +218,7 @@ footer {
 }
 
 .popuptext {
-    width: 50%;
+    width: 90%;
     background-color: #e2d5c9;
    /* background-size: cover;*/
    /* background-position: center;*/
@@ -233,7 +231,7 @@ footer {
     z-index: 1;
     /*margin: 0;*/
     left: 50%;
-    margin-top: -6rem;
+    margin-top: 0;
     transform: translateX(-50%);
     font-size: 2rem;
     color: #4f3325;
@@ -254,9 +252,9 @@ button#closePopup{
     cursor: pointer;
 }
 
-p.popup-bottom {
-    padding: 3rem 3rem 8rem 3rem;
+.popup-bottom {
+    padding: 5% 0 12% 0;
     /* width: 60%; */
-    margin: 0 4rem;
+    margin: 0 15%;
     line-height: 3.5rem;
 }

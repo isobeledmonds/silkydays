@@ -138,69 +138,15 @@ footer {
     margin-top: 2rem;
 }
 
+/* For screens between 450px and 980px */
 @media only screen and (min-width: 450px) and (max-width: 980px) {
     div#myPopup {
         margin-top: 15%;
         width: 75%;
     }
-
-}
-@media only screen and (max-width: 980px) {
-
-    .logo {
-        width: 12rem;
-        margin-top: 2rem;
-    }
-
-    .container {
-        margin-top: 0;
-        width: 80%;
-    }
-
-    .content {
-        width: 90%;
-    }
-    
-
-    .info-collection {
-        margin-top: 5rem;
-        width: 70%;
-    }
-
-    input {
-        height: 3rem;
-
-    }
-
-    .gdpr {
-        font-size: 0.85rem;
-        width: auto;
-        margin-top: 2rem;
-    }
-
-    footer {
-       /* position: absolute;*/
-        font-size: 1.25rem;
-    }
-
-    .popup-bottom {
-        padding: 5% 0 12% 0;
-        /* width: 60%; */
-        margin: 0 15%;
-        line-height: 3.5rem;
-    }
-
-    .button-div {
-        padding: 1.5rem;
-        justify-items: flex-end;
-        border: none;
-    }
-
-    .popup {
-        top: 40%
-    }
 }
 
+/* For screens less than 450px */
 @media only screen and (max-width: 449px) {
     div#myPopup {
         margin-top: 0;
@@ -220,7 +166,6 @@ footer {
         width: 90%;
     }
     
-
     .info-collection {
         margin-top: 5rem;
         width: 70%;
@@ -228,7 +173,6 @@ footer {
 
     input {
         height: 3rem;
-
     }
 
     .gdpr {
@@ -238,13 +182,11 @@ footer {
     }
 
     footer {
-       /* position: absolute;*/
         font-size: 1.25rem;
     }
 
     .popup-bottom {
         padding: 5% 0 12% 0;
-        /* width: 60%; */
         margin: 0 15%;
         line-height: 3.5rem;
     }
@@ -256,9 +198,60 @@ footer {
     }
 
     .popup {
-        top: 40%
+        top: 40%;
+    }
+}
+
+/* For screens below 980px */
+@media only screen and (max-width: 980px) {
+    .logo {
+        width: 12rem;
+        margin-top: 2rem;
     }
 
+    .container {
+        margin-top: 0;
+        width: 80%;
+    }
+
+    .content {
+        width: 90%;
+    }
+
+    .info-collection {
+        margin-top: 5rem;
+        width: 70%;
+    }
+
+    input {
+        height: 3rem;
+    }
+
+    .gdpr {
+        font-size: 0.85rem;
+        width: auto;
+        margin-top: 2rem;
+    }
+
+    footer {
+        font-size: 1.25rem;
+    }
+
+    .popup-bottom {
+        padding: 5% 0 12% 0;
+        margin: 0 15%;
+        line-height: 3.5rem;
+    }
+
+    .button-div {
+        padding: 1.5rem;
+        justify-items: flex-end;
+        border: none;
+    }
+
+    .popup {
+        top: 40%;
+    }
 }
 
 .popup {

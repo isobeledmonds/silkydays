@@ -1,54 +1,68 @@
-const { google } = require('googleapis');
-require('dotenv').config();
+require("dotenv").config();
+const { google } = require("googleapis");
+const { OAuth2 } = google.auth;
 
-const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN, SPREADSHEET_ID } = process.env;
+// Validate required environment variables
+const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPREADSHEET_ID, REFRESH_TOKEN } = process.env;
 
-const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
+if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH_TOKEN) {
+    throw new Error("Missing required environment variables for Google OAuth.");
+}
 
-exports.handler = async (event) => {
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            body: 'Method Not Allowed',
-        };
-    }
+// OAuth2 client setup
+const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
+// Set credentials with the refresh token
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+// Function to refresh the access token if expired
+async function refreshAccessToken() {
     try {
-        const { firstName, lastName, email } = JSON.parse(event.body);
+        const { credentials } = await oAuth2Client.refreshAccessToken();
+        const newAccessToken = credentials.access_token;
 
-        // Check that all required fields are provided
-        if (!firstName || !lastName || !email) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'All fields are required.' }),
-            };
-        }
+        console.log("New access token:", newAccessToken);
+        
+        // Store the new access token (if you need to persist it)
+        process.env.ACCESS_TOKEN = newAccessToken;
 
-        // Set credentials with the refresh token
-        oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+        return newAccessToken;
+    } catch (error) {
+        console.error("Failed to refresh access token:", error);
+        throw new Error("Unable to refresh access token");
+    }
+}
 
-        // Add data to Google Sheets (appending to the next row)
+// Function to save data to Google Sheets
+async function saveDataToGoogleSheets(data) {
+    try {
+        // Get the access token (refresh if necessary)
+        let accessToken = process.env.ACCESS_TOKEN || await refreshAccessToken();
+        
+        // Set the refreshed access token for the client
+        oAuth2Client.setCredentials({ access_token: accessToken });
+
+        const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
+
+        // Define the range and data
+        const range = "Sheet1!A2:C"; // Adjust this based on your sheet's layout
+        const resource = {
+            values: [[data.firstName, data.lastName, data.email]],
+        };
+
+        // Append data to the spreadsheet
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Sheet1!B2:D',  // Ensure data is appended correctly to columns A to C
-            valueInputOption: 'RAW',
-            resource: {
-                values: [
-                    [firstName, lastName, email],  // Array for each submission
-                ],
-            },
+            range,
+            valueInputOption: "RAW",
+            resource,
         });
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: 'Data saved successfully!' }),
-        };
+        console.log("Data saved successfully:", response.data);
     } catch (error) {
-        console.error('Error saving data:', error.message);
-        return {
-            statusCode: 500,
-            body: `Error saving data: ${error.message}`,
-        };
+        console.error("Error saving data to Google Sheets:", error.message);
+        throw new Error("Failed to save data to Google Sheets");
     }
-};
+}
+
+module.exports = { saveDataToGoogleSheets };

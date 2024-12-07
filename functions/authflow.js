@@ -16,12 +16,36 @@ console.log("SPREADSHEET_ID:", SPREADSHEET_ID);
 // OAuth2 client setup
 const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-// Set credentials with refresh token
+// Set credentials with the refresh token
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+// Function to refresh the access token if expired
+async function refreshAccessToken() {
+    try {
+        const { credentials } = await oAuth2Client.refreshAccessToken();
+        const newAccessToken = credentials.access_token;
+
+        console.log("New access token:", newAccessToken);
+        
+        // Store the new access token (if you need to persist it)
+        process.env.ACCESS_TOKEN = newAccessToken;
+
+        return newAccessToken;
+    } catch (error) {
+        console.error("Failed to refresh access token:", error);
+        throw new Error("Unable to refresh access token");
+    }
+}
 
 // Function to save data to Google Sheets
 async function saveDataToGoogleSheets(data) {
     try {
+        // Get the access token (refresh if necessary)
+        let accessToken = process.env.ACCESS_TOKEN || await refreshAccessToken();
+        
+        // Set the refreshed access token for the client
+        oAuth2Client.setCredentials({ access_token: accessToken });
+
         const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
 
         // Define the range and data

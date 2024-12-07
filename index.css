@@ -1,3 +1,4 @@
+/* Font-face declarations */
 @font-face {
     font-family: 'The Seasons';
     src: url('./resources/the-seasons/Fontspring-DEMO-theseasons-reg.otf') format('opentype');
@@ -30,14 +31,15 @@
     font-display: swap;
 }
 
-
+/* General styles */
 body {
-    background-image: url(./resources/background_v2.jpg);;
+    background-image: url(./resources/background_v2.jpg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     margin-left: -5rem;
     color: #4f3325;
+    font-family: 'Joliet', sans-serif; /* Adding fallback font */
 }
 
 html, body {
@@ -45,13 +47,12 @@ html, body {
     min-height: 100vh;
 }
 
-
 .logo {
     width: 9rem;
     margin-left: 2rem;
 }
 
-.container{
+.container {
     display: flex;
     width: 60%;
     justify-content: center;
@@ -59,23 +60,22 @@ html, body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    /*margin-top: -1rem;*/
     color: #4f3325;
 }
 
 .title {
-    font-family: 'Joliet';
+    font-family: 'Joliet', sans-serif;
     font-size: 12rem;
 }
 
 .content {
-    font-family: 'The Seasons Italic';
+    font-family: 'The Seasons Italic', sans-serif;
     margin-top: 2rem;
     font-size: 2rem;
     line-height: 4rem;
 }
 
-.info-collection{
+.info-collection {
     margin-top: 3rem;
     display: flex;
     align-items: center;
@@ -92,27 +92,25 @@ input {
     border: 0.15rem solid #4f3325;
     padding-left: 1.5rem;
     font-size: 1.15rem;
-    font-family: 'The Seasons';
-    letter-spacing: .1em; /* Adjust as needed */
+    font-family: 'The Seasons', sans-serif; /* Added fallback font */
+    letter-spacing: .1em;
     animation: 
-      typing 3.5s steps(40, end),
-      blink-caret .75s step-end infinite;
+        typing 3.5s steps(40, end),
+        blink-caret .75s step-end infinite;
 }
-
-
 
 button {
     color: #4f3325;
     border-radius: 1.5rem;
     width: fit-content;
     height: 2rem;
-    font-family: 'The Seasons Bold';
+    font-family: 'The Seasons Bold', sans-serif; /* Added fallback font */
     font-size: 0.9rem;
     padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgb(255, 255, 255,0.85);
+    background-color: rgb(255, 255, 255, 0.85);
     opacity: 80%;
     border: 0.15rem solid #4f3325;
     cursor: pointer;
@@ -122,7 +120,6 @@ button {
     margin-top: 1rem;
     font-size: 0.7rem;
     font-style: italic;
-
 }
 
 footer {
@@ -130,21 +127,18 @@ footer {
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
-    padding: 1rem 2rem; /* 1rem is 16px, 2rem is 32px */
-    color:#4f3325;
-    font-size: 0.75rem; /* 0.75rem is 12px */
+    padding: 1rem 2rem;
+    color: #4f3325;
+    font-size: 0.75rem;
     align-items: center;
     bottom: 0;
     margin-top: 2rem;
 }
 
-
-
-
-/* Media query for screens smaller than or equal to 449px */
-@media only screen and (max-width: 449px) {
+/* Mobile-first media queries */
+@media (max-width: 449px) {
     #myPopup {
-        margin-top: -15%!important;
+        margin-top: -15% !important;
         width: 75%;
     }
     .logo {
@@ -167,7 +161,6 @@ footer {
     }
     .gdpr {
         font-size: 0.85rem;
-        width: auto;
         margin-top: 2rem;
     }
     footer {
@@ -189,7 +182,7 @@ footer {
 }
 
 /* Media query for screens between 450px and 980px */
-@media  screen and (min-width: 450px) and (max-width: 980px) {
+@media (min-width: 450px) and (max-width: 980px) {
     #myPopup {
         margin-top: 15%;
         width: 75%;
@@ -214,7 +207,6 @@ footer {
     }
     .gdpr {
         font-size: 0.85rem;
-        width: auto;
         margin-top: 2rem;
     }
     footer {
@@ -235,12 +227,14 @@ footer {
     }
 }
 
-
 .popup {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 100%;
     z-index: 1;
 }
@@ -254,22 +248,11 @@ footer {
 .popuptext {
     width: 60%;
     background-color: #e2d5c9;
-   /* background-size: cover;*/
-   /* background-position: center;*/
-   /* background-repeat: no-repeat;*/
-    color: #fff;
+    color: #4f3325;
     text-align: center;
     border-radius: 0.5rem;
-    padding: 0;
-    position: absolute;
-    z-index: 1;
-    /*margin: 0;*/
-    left: 50%;
-    margin-top: 0;
-    transform: translateX(-50%);
     font-size: 2rem;
-    color: #4f3325;
-    font-family: 'The Seasons Italic';
+    font-family: 'The Seasons Italic', sans-serif;
 }
 
 .button-div {
@@ -278,7 +261,7 @@ footer {
     border: none;
 }
 
-button#closePopup{
+button#closePopup {
     background: none;
     border: none;
     color: white;
@@ -288,7 +271,6 @@ button#closePopup{
 
 .popup-bottom {
     padding: 5% 0 12% 0;
-    /* width: 60%; */
     margin: 0 15%;
     line-height: 3.5rem;
 }

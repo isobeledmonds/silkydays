@@ -138,13 +138,7 @@ footer {
     margin-top: 2rem;
 }
 
-/* For screens between 450px and 980px */
-@media only screen and (min-width: 450px) and (max-width: 980px) {
-    div#myPopup {
-        margin-top: 15%;
-        width: 75%;
-    }
-}
+
 
 /* For screens less than 450px */
 @media only screen and (max-width: 449px) {
@@ -199,6 +193,14 @@ footer {
 
     .popup {
         top: 40%;
+    }
+}
+
+/* For screens between 450px and 980px */
+@media only screen and (min-width: 450px) and (max-width: 980px) {
+    div#myPopup {
+        margin-top: 15%;
+        width: 75%;
     }
 }
 

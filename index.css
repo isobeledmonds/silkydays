@@ -138,16 +138,12 @@ footer {
     margin-top: 2rem;
 }
 
-@media only screen and (max-width: 980px) {
-    /* Set minimum width of 450px for the entire page */
-    html, body {
-        min-width: 450px;
-    }
-
+@media only screen and (min-width: 450px) and (max-width: 980px) {
     div#myPopup {
         margin-top: 15%;
         width: 75%;
     }
+
 }
 @media only screen and (max-width: 980px) {
 

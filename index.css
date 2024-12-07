@@ -140,7 +140,7 @@ footer {
 
 
 
-/* For screens less than 450px */
+/* For screens less than 450px
 @media only screen and (max-width: 449px) {
     div#myPopup {
         margin-top: 0;
@@ -253,6 +253,11 @@ footer {
 
     .popup {
         top: 40%;
+    }
+
+    div#myPopup {
+        margin-top: 0;
+        width: 75%;
     }
 }
 

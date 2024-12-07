@@ -50,8 +50,8 @@ async function makeApiCall() {
     const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
     // Make API requests with the refreshed access token
     const response = await sheets.spreadsheets.values.get({
-        spreadsheetId: 'your-spreadsheet-id',
-        range: 'Sheet1!A1:C10',
+        spreadsheetId: process.env.spreadsheetId,
+        range: 'Sheet1!A:C',
     });
     console.log(response.data);
 }

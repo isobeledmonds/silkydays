@@ -148,9 +148,6 @@ footer {
         margin-top: 2rem;
     }
 
-    header {
-        margin-bottom: 4rem;
-    }
     .container {
         margin-top: 0;
         width: 80%;
@@ -190,7 +187,7 @@ footer {
     }
 
     div#myPopup {
-        margin-top: 0;
+        margin-top: 15%;
         width: 75%;
     }
 
@@ -205,12 +202,19 @@ footer {
     }
 }
 
+@media only screen and (max-width: 450px) {
+    div#myPopup {
+        margin-top: 0;
+        width: 75%;
+    }
+
+}
+
 .popup {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
-    position: absolute;
+    position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
     width: 100%;
     z-index: 1;
 }

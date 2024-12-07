@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const firstName = document.getElementById("firstName").value.trim();
         const lastName = document.getElementById("lastName").value.trim();
         const email = document.getElementById("email").value.trim();
+        const preferences = document.getElementById("preferences").value; // Get selected value from dropdown
 
         // Validate form data
         if (!firstName || !lastName || !email || !email.includes("@") || !email.includes(".")) {
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch("/.netlify/functions/saveData", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ firstName, lastName, email }),
+                body: JSON.stringify({ firstName, lastName, email, preferences }), // Include preferences
             });
 
             const data = await response.json();
@@ -47,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("firstName").value = "";
                 document.getElementById("lastName").value = "";
                 document.getElementById("email").value = "";
+                document.getElementById("preferences").value = ""; // Clear the dropdown
             } else {
                 alert(`Error: ${data.error || "Unknown error occurred"}`);
             }

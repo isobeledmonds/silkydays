@@ -50,9 +50,9 @@ async function saveDataToGoogleSheets(data) {
         const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
 
         // Define the range and data
-        const range = "Sheet1!A2:C"; // Adjust this based on your sheet's layout
+        const range = "Sheet1!A2:D"; // Adjust this based on your sheet's layout
         const resource = {
-            values: [[data.firstName, data.lastName, data.email]],
+            values: [[data.firstName, data.lastName, data.email, data.preferences]], // Include preferences in the data
         };
 
         // Append data to the spreadsheet

@@ -99,6 +99,21 @@ input {
       blink-caret .75s step-end infinite;
 }
 
+select{
+    opacity: 50%;
+    border-radius: 2rem;
+    width: 75%;
+    height: 2.75rem;
+    margin-bottom: 2.5rem;
+    border: 0.15rem solid #4f3325;
+    padding-left: 1.5rem;
+    font-size: 1.15rem;
+    font-family: 'The Seasons';
+    letter-spacing: .1em; /* Adjust as needed */
+    animation: 
+      typing 3.5s steps(40, end),
+      blink-caret .75s step-end infinite;
+}
 
 
 button {

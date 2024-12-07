@@ -59,7 +59,7 @@ html, body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-top: -1rem;
+    /*margin-top: -1rem;*/
     color: #4f3325;
 }
 
@@ -148,8 +148,11 @@ footer {
         margin-top: 2rem;
     }
 
+    header {
+        margin-bottom: 4rem;
+    }
     .container {
-        margin-top: 4rem;
+        margin-top: 0;
         width: 80%;
     }
 
@@ -188,7 +191,7 @@ footer {
 
     div#myPopup {
         margin-top: 0;
-        width: 110%;
+        width: 75%;
     }
 
     .button-div {
@@ -197,13 +200,16 @@ footer {
         border: none;
     }
 
+    .popup {
+        top: 40%
+    }
 }
 
 .popup {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
+    position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
     position: absolute;
     width: 100%;
     z-index: 1;
@@ -216,7 +222,7 @@ footer {
 }
 
 .popuptext {
-    width: 50%;
+    width: 60%;
     background-color: #e2d5c9;
    /* background-size: cover;*/
    /* background-position: center;*/
@@ -229,7 +235,7 @@ footer {
     z-index: 1;
     /*margin: 0;*/
     left: 50%;
-    margin-top: -6rem;
+    margin-top: 0;
     transform: translateX(-50%);
     font-size: 2rem;
     color: #4f3325;

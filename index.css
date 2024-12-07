@@ -100,9 +100,8 @@ input {
 }
 
 select{
-    opacity: 50%;
+    opacity: 45%;
     border-radius: 2rem;
-    width: 75%;
     height: 2.75rem;
     margin-bottom: 2.5rem;
     border: 0.15rem solid #4f3325;

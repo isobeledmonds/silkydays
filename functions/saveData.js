@@ -2,12 +2,17 @@ require("dotenv").config();
 const { google } = require("googleapis");
 const { OAuth2 } = google.auth;
 
-// Validate required environment variables
+// Load environment variables
 const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPREADSHEET_ID, REFRESH_TOKEN } = process.env;
 
+// Check if all required environment variables are set
 if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH_TOKEN) {
     throw new Error("Missing required environment variables for Google OAuth.");
 }
+
+// Log environment variables (optional, remove in production)
+console.log("CLIENT_ID:", CLIENT_ID);
+console.log("SPREADSHEET_ID:", SPREADSHEET_ID);
 
 // OAuth2 client setup
 const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -22,7 +27,7 @@ async function refreshAccessToken() {
         const newAccessToken = credentials.access_token;
 
         console.log("New access token:", newAccessToken);
-        
+
         // Store the new access token (if you need to persist it)
         process.env.ACCESS_TOKEN = newAccessToken;
 

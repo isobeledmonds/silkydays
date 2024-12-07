@@ -1,11 +1,11 @@
-const { google } = require('googleapis');
-const readline = require('readline');
-const fs = require('fs');
-const dotenv = require('dotenv');
+const { google } = require("googleapis");
+const readline = require("readline");
+const dotenv = require("dotenv");
 
 // Load environment variables
 dotenv.config();
 
+// Google API Credentials from .env
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
@@ -17,65 +17,63 @@ if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI) {
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-// Define the scopes
+// The Google API Scopes
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'];
 
-// Generate the authorization URL
-const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',  // This ensures we get a refresh token
-    scope: SCOPES,
-});
+// Function to generate the authorization URL
+function generateAuthUrl() {
+    return oAuth2Client.generateAuthUrl({
+        access_type: 'offline',  // This ensures you get a refresh token
+        scope: SCOPES
+    });
+}
 
-// Netlify function handler
+// Handle incoming requests to the redirect URI
 exports.handler = async (event, context) => {
-    if (event.httpMethod === 'GET') {
+    const code = event.queryStringParameters.code;
+
+    if (!code) {
+        // If the code parameter is not found, redirect to the auth URL
         return {
-            statusCode: 200,
-            body: JSON.stringify({ authUrl })
+            statusCode: 302,
+            headers: {
+                Location: generateAuthUrl()  // This redirects to the auth URL for user authorization
+            }
         };
     }
 
-    if (event.httpMethod === 'POST') {
-        const code = JSON.parse(event.body).code;
-        try {
-            // Get the tokens using the code
-            const { tokens } = await oAuth2Client.getToken(code);
-            console.log('Tokens acquired:', tokens);
+    // If the code is present, attempt to exchange it for tokens
+    try {
+        const { tokens } = await oAuth2Client.getToken(code);
+        console.log('Tokens acquired:', tokens);
 
-            // Log the tokens in detail
-            console.log('Access Token:', tokens.access_token);
-            console.log('Refresh Token:', tokens.refresh_token);
-
-            // Check if a refresh token is included
-            if (tokens.refresh_token) {
-                console.log('Refresh token:', tokens.refresh_token);
-
-                // Save the refresh token to your .env file
-                fs.appendFileSync('.env', `REFRESH_TOKEN=${tokens.refresh_token}\n`);
-                console.log('Refresh token saved to .env file.');
-            } else {
-                console.log('No refresh token received.');
-            }
-
-            // Optionally, save the access token (if you want to keep it for later use)
-            fs.appendFileSync('.env', `ACCESS_TOKEN=${tokens.access_token}\n`);
-            console.log('Access token saved to .env file.');
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ message: 'Tokens saved successfully!' }),
-            };
-        } catch (error) {
-            console.error('Error acquiring tokens:', error);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ message: 'Error acquiring tokens', error: error.message }),
-            };
+        if (tokens.refresh_token) {
+            // Store the refresh token securely
+            process.env.REFRESH_TOKEN = tokens.refresh_token;
+            console.log('Refresh token saved to environment.');
         }
-    }
 
-    return {
-        statusCode: 405,
-        body: JSON.stringify({ message: 'Method Not Allowed' }),
-    };
+        // Optionally, save the access token (can be used for immediate use)
+        process.env.ACCESS_TOKEN = tokens.access_token;
+        console.log('Access token saved to environment.');
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: "Tokens successfully obtained!",
+                refresh_token: tokens.refresh_token,
+                access_token: tokens.access_token
+            })
+        };
+
+    } catch (error) {
+        console.error("Error during token exchange:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                message: "Failed to exchange code for tokens",
+                error: error.message
+            })
+        };
+    }
 };

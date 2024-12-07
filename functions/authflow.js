@@ -1,37 +1,36 @@
-require('dotenv').config({ path: '/Users/isobeledmonds/Documents/GitHub/silky_days/silkydays/.env' });
+require("dotenv").config();
 const { google } = require("googleapis");
 const { OAuth2 } = google.auth;
 
+// Validate required environment variables
+const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPREADSHEET_ID, REFRESH_TOKEN } = process.env;
 
-// Environment variables for Google credentials
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URIS = process.env.REDIRECT_URIS;  // Example: "urn:ietf:wg:oauth:2.0:oob"
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-
-if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URIS || !SPREADSHEET_ID) {
+if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH_TOKEN) {
     throw new Error("Missing required environment variables for Google OAuth.");
 }
 
-console.log("CLIENT_ID:", process.env.CLIENT_ID);
-console.log("CLIENT_SECRET:", process.env.CLIENT_SECRET);
-console.log("REDIRECT_URIS:", process.env.REDIRECT_URIS);
-console.log("SPREADSHEET_ID:", process.env.SPREADSHEET_ID);
+// Log to verify variables (optional, remove in production)
+console.log("CLIENT_ID:", CLIENT_ID);
+console.log("SPREADSHEET_ID:", SPREADSHEET_ID);
 
 // OAuth2 client setup
-const oauth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URIS);
+const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+
+// Set credentials with refresh token
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 // Function to save data to Google Sheets
 async function saveDataToGoogleSheets(data) {
     try {
-        // Authenticate Sheets API
-        const sheets = google.sheets({ version: "v4", auth: oauth2Client });
+        const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
 
-        const range = "Sheet1!A2:C"; // Example range for your spreadsheet
+        // Define the range and data
+        const range = "Sheet1!A2:C"; // Adjust this based on your sheet's layout
         const resource = {
             values: [[data.firstName, data.lastName, data.email]],
         };
 
+        // Append data to the spreadsheet
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
             range,
@@ -46,3 +45,4 @@ async function saveDataToGoogleSheets(data) {
     }
 }
 
+module.exports = { saveDataToGoogleSheets };

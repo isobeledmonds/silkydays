@@ -138,9 +138,17 @@ footer {
     margin-top: 2rem;
 }
 
+@media only screen and (max-width: 980px) {
+    /* Set minimum width of 450px for the entire page */
+    html, body {
+        min-width: 450px;
+    }
 
-
-
+    div#myPopup {
+        margin-top: 15%;
+        width: 75%;
+    }
+}
 @media only screen and (max-width: 980px) {
 
     .logo {
@@ -186,11 +194,6 @@ footer {
         line-height: 3.5rem;
     }
 
-    div#myPopup {
-        margin-top: 15%;
-        width: 75%;
-    }
-
     .button-div {
         padding: 1.5rem;
         justify-items: flex-end;
@@ -206,6 +209,58 @@ footer {
     div#myPopup {
         margin-top: 0;
         width: 75%;
+    }
+    .logo {
+        width: 12rem;
+        margin-top: 2rem;
+    }
+
+    .container {
+        margin-top: 0;
+        width: 80%;
+    }
+
+    .content {
+        width: 90%;
+    }
+    
+
+    .info-collection {
+        margin-top: 5rem;
+        width: 70%;
+    }
+
+    input {
+        height: 3rem;
+
+    }
+
+    .gdpr {
+        font-size: 0.85rem;
+        width: auto;
+        margin-top: 2rem;
+    }
+
+    footer {
+       /* position: absolute;*/
+        font-size: 1.25rem;
+    }
+
+    .popup-bottom {
+        padding: 5% 0 12% 0;
+        /* width: 60%; */
+        margin: 0 15%;
+        line-height: 3.5rem;
+    }
+
+    .button-div {
+        padding: 1.5rem;
+        justify-items: flex-end;
+        border: none;
+    }
+
+    .popup {
+        top: 40%
     }
 
 }

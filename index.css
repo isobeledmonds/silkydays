@@ -267,7 +267,7 @@ footer {
 }
 
 .popuptext {
-    width: 60%;
+    width: 50%;
     background-color: #e2d5c9;
    /* background-size: cover;*/
    /* background-position: center;*/
@@ -301,9 +301,9 @@ button#closePopup{
     cursor: pointer;
 }
 
-.popup-bottom {
-    padding: 5% 0 12% 0;
+popup-bottom {
+    padding: 5% 0 13% 0;
     /* width: 60%; */
-    margin: 0 15%;
+    margin: 0 7%;
     line-height: 3.5rem;
 }

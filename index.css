@@ -234,6 +234,7 @@ footer {
     }
     footer {
         font-size: 1.25rem;
+        position: absolute;
     }
     .popup-bottom {
         padding: 5% 0 12% 0;

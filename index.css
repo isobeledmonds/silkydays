@@ -84,7 +84,7 @@ html, body {
 }
 
 input {
-    opacity: 50%;
+    opacity: 70%;
     border-radius: 2rem;
     width: 75%;
     height: 2.75rem;
@@ -100,7 +100,7 @@ input {
 }
 
 select{
-    opacity: 45%;
+    opacity: 65%;
     width: fit-content;
     border-radius: 2rem;
     height: 2.75rem;

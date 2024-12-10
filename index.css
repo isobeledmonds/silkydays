@@ -106,7 +106,8 @@ select{
     height: 2.75rem;
     margin-bottom: 2.5rem;
     border: 0.15rem solid #4f3325;
-    padding-left: 1.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     font-size: 1.15rem;
     font-family: 'The Seasons';
     letter-spacing: .1em; /* Adjust as needed */

@@ -209,7 +209,7 @@ footer {
 /* Media query for screens between 450px and 980px */
 @media  (max-width: 980px) {
     #myPopup {
-        margin-top: -15%;
+        margin-top: -5%;
         width: 75%;
     }
     .logo {
@@ -312,3 +312,6 @@ popup-bottom {
     line-height: 3.5rem;
 }
 
+popup-bottom {
+    padding: 5% 12% 5% 12%;
+}

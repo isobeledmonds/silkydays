@@ -31,24 +31,24 @@
 }
 
 @font-face {
-    font-family: 'Arsenica';
-    src: url('./resources/arsenica/ArsenicaTrial-Regular.ttf') format('truetype');
+    font-family: 'Midnight Bold';
+    src: url('./resources/midnight-serenity/MIDNIGHT\ SERENITY.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Midnight Italic';
+    src: url('./resources/midnight-serenity/MIDNIGHT\ SERENITY.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Arsenica Italic';
-    src: url('./resources/arsenica/ArsenicaTrial-Italic.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Arsenica Bold';
-    src: url('./resources/arsenica/ArsenicaTrial-Bold.ttf') format('truetype');
+    font-family: 'Midnight';
+    src: url('./resources/midnight-serenity/MIDNIGHT\ SERENITY-Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -97,7 +97,7 @@ html, body {
 }
 
 .content {
-    font-family: 'Arsenica Italic';
+    font-family: 'Midnight Italic';
     margin-top: 2rem;
     font-size: 2rem;
     line-height: 4rem;
@@ -138,7 +138,7 @@ select{
     padding-left: 1rem;
     padding-right: 1rem;
     font-size: 1.15rem;
-    font-family: 'Arsenica';
+    font-family: 'Midnight';
     letter-spacing: .1em; /* Adjust as needed */
     animation: 
       typing 3.5s steps(40, end),
@@ -152,7 +152,7 @@ button {
     border-radius: 1.5rem;
     width: 40%;
     height: 2rem;
-    font-family: 'Arsenica Bold';
+    font-family: 'Midnight Bold';
     font-size: 1rem;
     padding: 1rem;
     display: flex;

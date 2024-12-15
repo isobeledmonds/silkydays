@@ -257,7 +257,8 @@ footer {
         width: 70%;
     }
     input {
-        height: 3rem;
+        height: 3.5rem;
+        font-size: 1.5rem;
     }
     .gdpr {
         font-size: 1rem;
@@ -284,6 +285,12 @@ footer {
 
     select {
         width: 50%;
+        height: 3.5rem;
+    }
+
+    button {
+        height: 3rem;
+        font-size: 1.25rem;
     }
 }
 

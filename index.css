@@ -286,6 +286,7 @@ footer {
     select {
         width: 50%;
         height: 3.5rem;
+        padding-right: 1.5rem;
     }
 
     button {

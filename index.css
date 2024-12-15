@@ -270,7 +270,7 @@ footer {
         font-size: 1.25rem;
         position: relative;
     }
-    .popup-bottom {
+    p.popup-bottom {
         padding: 5% 0 12% 0;
         margin: 0 15%;
         line-height: 3.5rem;

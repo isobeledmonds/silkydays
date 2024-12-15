@@ -137,7 +137,7 @@ select{
     color: #4f3325;
     padding-left: 1rem;
     padding-right: 1rem;
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-family: 'Adega';
     letter-spacing: .1em; /* Adjust as needed */
     animation: 
@@ -292,7 +292,7 @@ footer {
 
     button {
         height: 3rem;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
 }
 

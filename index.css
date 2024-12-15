@@ -31,24 +31,24 @@
 }
 
 @font-face {
-    font-family: 'Midnight Bold';
-    src: url('./resources/midnight-serenity/MIDNIGHT\ SERENITY.ttf') format('truetype');
+    font-family: 'Adega Bold';
+    src: url('./resources/adega-serif/ADega\ Serif\ Bold.otf') format('opentype');
     font-weight: 400;
     font-style:normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Midnight Italic';
-    src: url('./resources/midnight-serenity/MIDNIGHT\ SERENITY-Italic.ttf') format('truetype');
+    font-family: 'Adega Italic';
+    src: url('./resources/adega-serif/ADega\ Serif\ italic.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Midnight';
-    src: url('./resources/midnight-serenity/MIDNIGHT\ SERENITY.ttf') format('truetype');
+    font-family: 'Adega';
+    src: url('./resources/adega-serif/ADega\ Serif\ Regular.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -97,7 +97,7 @@ html, body {
 }
 
 .content {
-    font-family: 'Midnight Italic';
+    font-family: 'Adega Italic';
     margin-top: 2rem;
     font-size: 2rem;
     line-height: 4rem;
@@ -121,7 +121,7 @@ input {
     border: 0.15rem solid #4f3325;
     padding-left: 1.5rem;
     font-size: 1.15rem;
-    font-family: 'The Seasons';
+    font-family: 'Adega';
     letter-spacing: .1em; /* Adjust as needed */
     animation: 
       typing 3.5s steps(40, end),
@@ -139,7 +139,7 @@ select{
     padding-left: 1rem;
     padding-right: 1rem;
     font-size: 1.15rem;
-    font-family: 'Midnight';
+    font-family: 'Adega';
     letter-spacing: .1em; /* Adjust as needed */
     animation: 
       typing 3.5s steps(40, end),
@@ -153,7 +153,7 @@ button {
     border-radius: 1.5rem;
     width: 40%;
     height: 2rem;
-    font-family: 'Midnight';
+    font-family: 'Adega';
     font-weight: bold;
     font-size: 1rem;
     padding: 1rem;
@@ -331,7 +331,7 @@ footer {
     transform: translateX(-50%);
     font-size: 2rem;
     color: #4f3325;
-    font-family: 'The Seasons Italic';
+    font-family: 'Adega Italic';
 }
 
 .button-div {

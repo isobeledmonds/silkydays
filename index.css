@@ -148,7 +148,7 @@ select{
 button {
     color: #4f3325;
     border-radius: 1.5rem;
-    width: fit-content;
+    width: 30%;
     height: 2rem;
     font-family: 'Arsenica Bold';
     font-size: 0.9rem;

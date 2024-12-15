@@ -34,7 +34,7 @@
     font-family: 'Midnight Bold';
     src: url('./resources/midnight-serenity/MIDNIGHT\ SERENITY.ttf') format('truetype');
     font-weight: 600;
-    font-style: normal;
+    font-style:normal;
     font-display: swap;
 }
 
@@ -101,6 +101,7 @@ html, body {
     margin-top: 2rem;
     font-size: 2rem;
     line-height: 4rem;
+    font-weight: bold;
 }
 
 .info-collection{
@@ -163,6 +164,7 @@ button {
     opacity: 80%;
     border: 0.15rem solid #4f3325;
     cursor: pointer;
+    font-weight: bold;
 }
 
 .gdpr {

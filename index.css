@@ -336,6 +336,8 @@ footer {
 .button-div {
     padding: 1.5rem;
     justify-items: flex-end;
+    display: flex;
+    justify-content: flex-end;
     border: none;
 }
 
@@ -343,17 +345,22 @@ button#closePopup{
     background: none;
     border: none;
     color: white;
-    font-size: 3rem;
+    font-size: 5rem;
     cursor: pointer;
+    width: fit-content;
 }
 
-popup-bottom {
+/*.popup-bottom {
     padding: 5% 0 13% 0;
-    /* width: 60%; */
+    /* width: 60%; 
     margin: 0 7%;
     line-height: 3.5rem;
 }
 
-popup-bottom {
+.popup-bottom {
     padding: 5% 12% 5% 12%;
+}*/
+
+p.popup-bottom {
+    padding: 5%;
 }

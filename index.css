@@ -244,10 +244,10 @@ footer {
     }
     .container {
         margin-top: 0;
-        width: 90%;
+        width: 100%;
     }
     .content {
-        width: 90%;
+        width: 95%;
     }
     .info-collection {
         margin-top: 5rem;

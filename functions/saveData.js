@@ -10,35 +10,30 @@ if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH
     throw new Error("Missing required environment variables for Google OAuth.");
 }
 
+// Log environment variables (optional, remove in production)
+console.log("CLIENT_ID:", CLIENT_ID);
+console.log("SPREADSHEET_ID:", SPREADSHEET_ID);
+
 // OAuth2 client setup
 const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+
+// Set credentials with the refresh token
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-// Helper function to validate access token
-async function validateAccessToken(accessToken) {
-    try {
-        const response = await google.auth.oauth2.tokeninfo({ access_token: accessToken });
-        return response.data;
-    } catch (error) {
-        console.warn("Access token validation failed, refreshing token...");
-        return null;
-    }
-}
-
-// Function to refresh the access token
+// Function to refresh the access token if expired
 async function refreshAccessToken() {
     try {
         const { credentials } = await oAuth2Client.refreshAccessToken();
         const newAccessToken = credentials.access_token;
 
-        console.log("New access token acquired:", newAccessToken);
+        console.log("New access token:", newAccessToken);
 
-        // Optional: Store the new access token temporarily in memory
+        // Store the new access token (if you need to persist it)
         process.env.ACCESS_TOKEN = newAccessToken;
 
         return newAccessToken;
     } catch (error) {
-        console.error("Failed to refresh access token:", error.message);
+        console.error("Failed to refresh access token:", error);
         throw new Error("Unable to refresh access token");
     }
 }
@@ -46,23 +41,18 @@ async function refreshAccessToken() {
 // Function to save data to Google Sheets
 async function saveDataToGoogleSheets(data) {
     try {
-        let accessToken = process.env.ACCESS_TOKEN;
-
-        // Validate or refresh access token
-        const isValidToken = accessToken ? await validateAccessToken(accessToken) : null;
-        if (!isValidToken) {
-            accessToken = await refreshAccessToken();
-        }
-
-        // Set the new or existing access token
+        // Get the access token (refresh if necessary)
+        let accessToken = process.env.ACCESS_TOKEN || await refreshAccessToken();
+        
+        // Set the refreshed access token for the client
         oAuth2Client.setCredentials({ access_token: accessToken });
 
         const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
 
         // Define the range and data
-        const range = "Sheet1!A2:D";
+        const range = "Sheet1!A2:D"; // Adjust this based on your sheet's layout
         const resource = {
-            values: [[data.firstName, data.lastName, data.email, data.preferences]],
+            values: [[data.firstName, data.lastName, data.email, data.preferences]], // Include preferences in the data
         };
 
         // Append data to the spreadsheet
@@ -81,16 +71,21 @@ async function saveDataToGoogleSheets(data) {
 }
 
 // Netlify serverless function handler
-exports.handler = async function (event, context) {
+exports.handler = async function(event, context) {
     try {
+        // Assuming the data comes in a POST request body
         const data = JSON.parse(event.body);
+
+        // Call the function to save data to Google Sheets
         await saveDataToGoogleSheets(data);
 
+        // Respond with success message
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Data saved successfully" }),
         };
     } catch (error) {
+        // Respond with error message
         return {
             statusCode: 500,
             body: JSON.stringify({ error: error.message }),

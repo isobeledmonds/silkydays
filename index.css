@@ -30,6 +30,32 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Arsenica';
+    src: url('./resources/arsenica/ArsenicaTrial-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Arsenica Italic';
+    src: url('./resources/arsenica/ArsenicaTrial-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Arsenica Bold';
+    src: url('./resources/arsenica/ArsenicaTrial-Bold.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+
 
 body {
     background-image: url(./resources/background_v3.jpg);;
@@ -71,7 +97,7 @@ html, body {
 }
 
 .content {
-    font-family: 'The Seasons Italic';
+    font-family: 'Arsenica Italic';
     margin-top: 2rem;
     font-size: 2rem;
     line-height: 4rem;
@@ -111,7 +137,7 @@ select{
     padding-left: 1rem;
     padding-right: 1rem;
     font-size: 1.15rem;
-    font-family: 'The Seasons';
+    font-family: 'Arsenica';
     letter-spacing: .1em; /* Adjust as needed */
     animation: 
       typing 3.5s steps(40, end),
@@ -124,7 +150,7 @@ button {
     border-radius: 1.5rem;
     width: fit-content;
     height: 2rem;
-    font-family: 'The Seasons Bold';
+    font-family: 'Arsenica Bold';
     font-size: 0.9rem;
     padding: 1rem;
     display: flex;

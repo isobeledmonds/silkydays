@@ -152,7 +152,7 @@ button {
     border-radius: 1.5rem;
     width: 40%;
     height: 2rem;
-    font-family: 'Adega';
+    font-family: 'Adega Bold';
     font-weight: bold;
     font-size: 1rem;
     padding: 1rem;
@@ -292,7 +292,7 @@ footer {
 
     button {
         height: 3rem;
-        font-size: 1.25rem;
+        font-size: 1.5rem;
     }
 }
 

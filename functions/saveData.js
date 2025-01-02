@@ -1,25 +1,40 @@
 require("dotenv").config();
 const { google } = require("googleapis");
-const { OAuth2 } = google.auth;
+const fs = require("fs");
 
-// Load environment variables
+const TOKEN_PATH = "/tmp/token.json";
 const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPREADSHEET_ID, REFRESH_TOKEN } = process.env;
 
-// Check if all required environment variables are set
-if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH_TOKEN) {
-    console.error("Missing required environment variables for Google OAuth.");
-    throw new Error("Missing required environment variables for Google OAuth.");
+// OAuth2 client setup
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+
+// Function to initialize or load token
+function initializeToken() {
+    const token = {
+        refresh_token: REFRESH_TOKEN,
+        scope: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'].join(' '),
+        token_type: 'Bearer',
+        expiry_date: Date.now() + 3600 * 1000 // 1 hour
+    };
+    oAuth2Client.setCredentials(token);
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
+    console.log('Initialized token from environment variables and saved to /tmp/token.json');
 }
 
-// Log environment variables (optional, remove in production)
-console.log("CLIENT_ID:", CLIENT_ID);
-console.log("SPREADSHEET_ID:", SPREADSHEET_ID);
-
-// OAuth2 client setup
-const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-
-// Set credentials with the refresh token
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+// Load the token from the file or environment variables
+if (fs.existsSync(TOKEN_PATH)) {
+    try {
+        const token = fs.readFileSync(TOKEN_PATH, 'utf8');
+        oAuth2Client.setCredentials(JSON.parse(token));
+        console.log('Loaded token from file:', JSON.parse(token));
+    } catch (error) {
+        console.error('Error reading token file:', error.message);
+        initializeToken();
+    }
+} else {
+    console.log('Token file not found, creating from environment variables.');
+    initializeToken();
+}
 
 // Function to refresh the access token if expired
 async function refreshAccessToken() {
@@ -27,14 +42,13 @@ async function refreshAccessToken() {
         const { credentials } = await oAuth2Client.refreshAccessToken();
         const newAccessToken = credentials.access_token;
 
-        console.log("New access token obtained.");
-
-        // Store the new access token (if you need to persist it)
-        process.env.ACCESS_TOKEN = newAccessToken;
+        // Save the new token
+        fs.writeFileSync(TOKEN_PATH, JSON.stringify(oAuth2Client.credentials));
+        console.log('Tokens refreshed and saved:', oAuth2Client.credentials);
 
         return newAccessToken;
     } catch (error) {
-        console.error("Failed to refresh access token:", error);
+        console.error('Error refreshing token:', error.message);
         throw new Error("Unable to refresh access token");
     }
 }
@@ -56,9 +70,6 @@ async function saveDataToGoogleSheets(data) {
             values: [[data.firstName, data.lastName, data.email, data.preferences]], // Include preferences in the data
         };
 
-        // Log the data before attempting to append
-        console.log("Attempting to append the following data:", resource);
-
         // Append data to the spreadsheet
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
@@ -77,14 +88,8 @@ async function saveDataToGoogleSheets(data) {
 // Netlify serverless function handler
 exports.handler = async function(event, context) {
     try {
-        // Log the incoming event body for debugging
-        console.log("Received event:", event.body);
-
         // Assuming the data comes in a POST request body
         const data = JSON.parse(event.body);
-
-        // Log the parsed data
-        console.log("Parsed data:", data);
 
         // Call the function to save data to Google Sheets
         await saveDataToGoogleSheets(data);
@@ -95,9 +100,6 @@ exports.handler = async function(event, context) {
             body: JSON.stringify({ message: "Data saved successfully" }),
         };
     } catch (error) {
-        // Log the error
-        console.error("Error in handler function:", error);
-
         // Respond with error message
         return {
             statusCode: 500,

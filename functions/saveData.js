@@ -1,125 +1,96 @@
-require('dotenv').config();
-const { google } = require('googleapis');
-const nodemailer = require('nodemailer');
+require("dotenv").config();
+const { google } = require("googleapis");
 const { OAuth2 } = google.auth;
 
-const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPREADSHEET_ID, REFRESH_TOKEN, EMAIL_USER, EMAIL_PASS, NOTIFY_EMAIL } = process.env;
+// Load environment variables
+const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPREADSHEET_ID, REFRESH_TOKEN } = process.env;
 
-if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH_TOKEN || !EMAIL_USER || !EMAIL_PASS || !NOTIFY_EMAIL) {
-    throw new Error("Missing required environment variables.");
+// Check if all required environment variables are set
+if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH_TOKEN) {
+    throw new Error("Missing required environment variables for Google OAuth.");
 }
 
+// Log the refresh token for debugging (ensure you remove this from production)
+console.log("Loaded REFRESH_TOKEN:", REFRESH_TOKEN);
+
+// OAuth2 client setup
 const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+
+// Set credentials with the refresh token (log to confirm it is set)
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+console.log("Set credentials with refresh token:", REFRESH_TOKEN);
 
 // Function to refresh the access token if expired
 async function refreshAccessToken() {
     try {
+        console.log("Attempting to refresh access token...");
         const { credentials } = await oAuth2Client.refreshAccessToken();
-        return credentials.access_token;
+        const newAccessToken = credentials.access_token;
+
+        console.log("New access token:", newAccessToken);
+
+        // Temporarily store the new access token (it will persist in the current runtime)
+        process.env.ACCESS_TOKEN = newAccessToken;
+
+        return newAccessToken;
     } catch (error) {
-        console.error('Failed to refresh access token:', error);
-        await sendErrorEmail(error.message);
-        throw new Error("Unable to refresh access token");
+        console.error("Error refreshing access token:", error.message);
+        throw new Error("Unable to refresh access token: " + error.message);
     }
 }
 
 // Function to save data to Google Sheets
 async function saveDataToGoogleSheets(data) {
     try {
+        // Get the access token (refresh if necessary)
         let accessToken = process.env.ACCESS_TOKEN || await refreshAccessToken();
+        
+        // Set the refreshed access token for the client
         oAuth2Client.setCredentials({ access_token: accessToken });
 
-        const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
+        const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
 
-        const range = "Sheet1!A2:D"; 
+        // Define the range and data
+        const range = "Sheet1!A2:D"; // Adjust this based on your sheet's layout
         const resource = {
-            values: [[data.firstName, data.lastName, data.email, data.preferences]],
+            values: [[data.firstName, data.lastName, data.email, data.preferences]], // Include preferences in the data
         };
 
-        await sheets.spreadsheets.values.append({
+        // Append data to the spreadsheet
+        const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
             range,
             valueInputOption: "RAW",
             resource,
         });
-        
-        console.log("Data saved successfully.");
 
-        // Test email send after successful data submission
-        await sendTestEmail("Data submitted successfully to Google Sheets.");
-
+        console.log("Data saved successfully:", response.data);
     } catch (error) {
-        console.error("Error saving data to Google Sheets:", error.message);
-        await sendErrorEmail(error.message);
-        throw new Error("Failed to save data to Google Sheets");
+        console.error("Error saving data to Google Sheets:", error);
+        throw new Error("Failed to save data to Google Sheets: " + error.message);
     }
 }
 
-// Function to send an error email
-async function sendErrorEmail(errorMessage) {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: EMAIL_USER, // Your email
-            pass: EMAIL_PASS, // Your email password or app-specific password
-        },
-    });
-
-    let mailOptions = {
-        from: EMAIL_USER,
-        to: NOTIFY_EMAIL,  // The email to notify
-        subject: 'Google Sheets API Error',
-        text: `There was an error while saving data to Google Sheets: ${errorMessage}`,
-    };
-
+// Netlify serverless function handler
+exports.handler = async function(event, context) {
     try {
-        await transporter.sendMail(mailOptions);
-        console.log('Error notification sent via email.');
-    } catch (error) {
-        console.error('Error sending email notification:', error);
-    }
-}
-
-// Function to send a test email when data is successfully submitted
-async function sendTestEmail(message) {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: EMAIL_USER, // Your email
-            pass: EMAIL_PASS, // Your email password or app-specific password
-        },
-    });
-
-    let mailOptions = {
-        from: EMAIL_USER,
-        to: NOTIFY_EMAIL,  // The email to notify
-        subject: 'Google Sheets API Test',
-        text: `Test: ${message}`,
-    };
-
-    try {
-        await transporter.sendMail(mailOptions);
-        console.log('Test email sent successfully.');
-    } catch (error) {
-        console.error('Error sending test email:', error);
-    }
-}
-
-// Netlify function handler
-exports.handler = async function(event) {
-    try {
+        // Assuming the data comes in a POST request body
         const data = JSON.parse(event.body);
+
+        // Call the function to save data to Google Sheets
         await saveDataToGoogleSheets(data);
 
+        // Respond with success message
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Data saved successfully" }),
         };
     } catch (error) {
+        // Respond with error message and detailed logging
+        console.error("Error handling request:", error.message);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
+            body: JSON.stringify({ error: error.message, stack: error.stack }),
         };
     }
 };

@@ -10,6 +10,9 @@ if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH
     throw new Error("Missing required environment variables for Google OAuth.");
 }
 
+// Log the refresh token for debugging (ensure you remove this from production)
+console.log("Loaded REFRESH_TOKEN:", REFRESH_TOKEN);
+
 // OAuth2 client setup
 const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
@@ -26,8 +29,8 @@ async function refreshAccessToken() {
 
         return newAccessToken;
     } catch (error) {
-        console.error("Failed to refresh access token:", error.message);
-        throw new Error("Unable to refresh access token");
+        console.error("Error refreshing access token:", error.message);
+        throw new Error("Unable to refresh access token: " + error.message);
     }
 }
 
@@ -58,8 +61,8 @@ async function saveDataToGoogleSheets(data) {
 
         console.log("Data saved successfully:", response.data);
     } catch (error) {
-        console.error("Error saving data to Google Sheets:", error.message);
-        throw new Error("Failed to save data to Google Sheets");
+        console.error("Error saving data to Google Sheets:", error);
+        throw new Error("Failed to save data to Google Sheets: " + error.message);
     }
 }
 
@@ -78,11 +81,11 @@ exports.handler = async function(event, context) {
             body: JSON.stringify({ message: "Data saved successfully" }),
         };
     } catch (error) {
-        // Respond with error message
+        // Respond with error message and detailed logging
         console.error("Error handling request:", error.message);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
+            body: JSON.stringify({ error: error.message, stack: error.stack }),
         };
     }
 };

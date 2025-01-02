@@ -16,9 +16,14 @@ console.log("Loaded REFRESH_TOKEN:", REFRESH_TOKEN);
 // OAuth2 client setup
 const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
+// Set credentials with the refresh token (log to confirm it is set)
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+console.log("Set credentials with refresh token:", REFRESH_TOKEN);
+
 // Function to refresh the access token if expired
 async function refreshAccessToken() {
     try {
+        console.log("Attempting to refresh access token...");
         const { credentials } = await oAuth2Client.refreshAccessToken();
         const newAccessToken = credentials.access_token;
 

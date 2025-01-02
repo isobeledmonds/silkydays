@@ -45,6 +45,10 @@ async function saveDataToGoogleSheets(data) {
         });
         
         console.log("Data saved successfully.");
+
+        // Test email send after successful data submission
+        await sendTestEmail("Data submitted successfully to Google Sheets.");
+
     } catch (error) {
         console.error("Error saving data to Google Sheets:", error.message);
         await sendErrorEmail(error.message);
@@ -74,6 +78,31 @@ async function sendErrorEmail(errorMessage) {
         console.log('Error notification sent via email.');
     } catch (error) {
         console.error('Error sending email notification:', error);
+    }
+}
+
+// Function to send a test email when data is successfully submitted
+async function sendTestEmail(message) {
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: EMAIL_USER, // Your email
+            pass: EMAIL_PASS, // Your email password or app-specific password
+        },
+    });
+
+    let mailOptions = {
+        from: EMAIL_USER,
+        to: NOTIFY_EMAIL,  // The email to notify
+        subject: 'Google Sheets API Test',
+        text: `Test: ${message}`,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Test email sent successfully.');
+    } catch (error) {
+        console.error('Error sending test email:', error);
     }
 }
 

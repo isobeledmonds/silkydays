@@ -7,6 +7,7 @@ const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPREADSHEET_ID, REFRESH_TOKEN } 
 
 // Check if all required environment variables are set
 if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH_TOKEN) {
+    console.error("Missing required environment variables for Google OAuth.");
     throw new Error("Missing required environment variables for Google OAuth.");
 }
 
@@ -26,7 +27,7 @@ async function refreshAccessToken() {
         const { credentials } = await oAuth2Client.refreshAccessToken();
         const newAccessToken = credentials.access_token;
 
-        console.log("New access token:", newAccessToken);
+        console.log("New access token obtained.");
 
         // Store the new access token (if you need to persist it)
         process.env.ACCESS_TOKEN = newAccessToken;
@@ -55,6 +56,9 @@ async function saveDataToGoogleSheets(data) {
             values: [[data.firstName, data.lastName, data.email, data.preferences]], // Include preferences in the data
         };
 
+        // Log the data before attempting to append
+        console.log("Attempting to append the following data:", resource);
+
         // Append data to the spreadsheet
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
@@ -73,8 +77,14 @@ async function saveDataToGoogleSheets(data) {
 // Netlify serverless function handler
 exports.handler = async function(event, context) {
     try {
+        // Log the incoming event body for debugging
+        console.log("Received event:", event.body);
+
         // Assuming the data comes in a POST request body
         const data = JSON.parse(event.body);
+
+        // Log the parsed data
+        console.log("Parsed data:", data);
 
         // Call the function to save data to Google Sheets
         await saveDataToGoogleSheets(data);
@@ -85,6 +95,9 @@ exports.handler = async function(event, context) {
             body: JSON.stringify({ message: "Data saved successfully" }),
         };
     } catch (error) {
+        // Log the error
+        console.error("Error in handler function:", error);
+
         // Respond with error message
         return {
             statusCode: 500,

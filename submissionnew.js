@@ -61,3 +61,4 @@ document.addEventListener("DOMContentLoaded", () => {
     // Event listeners
     submitButton.addEventListener("click", handleSubmit);
     closePopupButton.addEventListener("click", hidePopup);
+});

@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const closePopupButton = document.getElementById("closePopup");
 
     // Function to show the popup
-    function showPopup() {
+    function showPopup(message) {
+        popuptext.textContent = message; // Update popup text
         popup.setAttribute("id", "show"); // Show popup container
     }
 
@@ -30,6 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        if (!preferences) {
+            alert("Please select a preference.");
+            return;
+        }
+
         try {
             // Simulate server response
             const response = await fetch("/.netlify/functions/saveData", {
@@ -42,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) {
                 // Show the popup
-                showPopup();
+                showPopup("Your data has been saved successfully!");
 
                 // Clear the form
                 document.getElementById("firstName").value = "";
@@ -50,11 +56,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("email").value = "";
                 document.getElementById("preferences").value = ""; // Clear the dropdown
             } else {
-                alert(`Error: ${data.error || "Unknown error occurred"}`);
+                showPopup(`Error: ${data.error || "Unknown error occurred"}`);
             }
         } catch (error) {
             console.error("Error submitting data:", error);
-            alert("An unexpected error occurred. Please try again.");
+            showPopup("An unexpected error occurred. Please try again.");
         }
     }
 

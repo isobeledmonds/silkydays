@@ -73,21 +73,21 @@ async function saveDataToGoogleSheets(data) {
 
 // Netlify serverless function handler
 exports.handler = async function(event, context) {
-    try {
-        // Assuming the data comes in a POST request body
-        const data = JSON.parse(event.body);
+    console.log("Incoming request:", event); // Log the incoming request
 
-        // Call the function to save data to Google Sheets
+    try {
+        const data = JSON.parse(event.body || "{}");
+        console.log("Parsed request body:", data); // Log parsed data
+
         await saveDataToGoogleSheets(data);
 
-        // Respond with success message
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Data saved successfully" }),
         };
     } catch (error) {
-        // Respond with error message and detailed logging
-        console.error("Error handling request:", error.message);
+        console.error("Error handling request:", error);
+
         return {
             statusCode: 500,
             body: JSON.stringify({ error: error.message, stack: error.stack }),

@@ -1,6 +1,7 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("#dataForm");
+document.addEventListener("DOMContentLoaded", () => {
+    const submitButton = document.getElementById("submitButton");
     const popup = document.querySelector(".popup");
+    const popuptext = document.querySelector(".popuptext");
     const closePopupButton = document.getElementById("closePopup");
 
     // Function to show the popup
@@ -10,56 +11,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to hide the popup
     function hidePopup() {
-        popup.removeAttribute("id"); // Hide popup container
+        popup.removeAttribute("id");
     }
 
     // Handle form submission
-    form.addEventListener("submit", async function (e) {
-        e.preventDefault();
+    async function handleSubmit(event) {
+        event.preventDefault();
 
-        const formData = new FormData(form);
-        const data = {
-            firstName: formData.get("firstName"),
-            lastName: formData.get("lastName"),
-            email: formData.get("email"),
-            preferences: formData.get("preferences"),
-        };
+        // Collect form data
+        const firstName = document.getElementById("firstName").value.trim();
+        const lastName = document.getElementById("lastName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const preferences = document.getElementById("preferences").value; // Get selected value from dropdown
 
         // Validate form data
-        if (!data.firstName || !data.lastName || !data.email || !data.email.includes("@") || !data.email.includes(".")) {
-            alert("All fields are required, and email must be valid.");
+        if (!firstName || !lastName || !email || !email.includes("@") || !email.includes(".")) {
+            alert("All fields are required and email must be valid.");
             return;
         }
 
         try {
+            // Simulate server response
             const response = await fetch("/.netlify/functions/saveData", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify({ firstName, lastName, email, preferences }), // Include preferences
             });
 
-            if (!response.ok) {
-                throw new Error("Failed to save data: " + (await response.text()));
-            }
+            const data = await response.json();
 
-            const result = await response.json();
-
-            // Show the popup if data is saved successfully
             if (response.ok) {
+                // Show the popup
                 showPopup();
+
+                // Clear the form
+                document.getElementById("firstName").value = "";
+                document.getElementById("lastName").value = "";
+                document.getElementById("email").value = "";
+                document.getElementById("preferences").value = ""; // Clear the dropdown
+            } else {
+                alert(`Error: ${data.error || "Unknown error occurred"}`);
             }
-
-            // Clear the form fields
-            form.reset();
-
-            // Display a success message
-            alert(result.message || "Data saved successfully!");
         } catch (error) {
-            console.error("Error submitting form:", error.message);
-            alert("Failed to save data. Please try again.");
+            console.error("Error submitting data:", error);
+            alert("An unexpected error occurred. Please try again.");
         }
-    });
+    }
 
-    // Close the popup when the close button is clicked
+    // Event listeners
+    submitButton.addEventListener("click", handleSubmit);
     closePopupButton.addEventListener("click", hidePopup);
-});

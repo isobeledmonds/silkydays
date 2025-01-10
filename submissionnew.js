@@ -1,67 +1,65 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const submitButton = document.getElementById("submitButton");
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("#dataForm");
     const popup = document.querySelector(".popup");
-    const popupText = document.querySelector(".popuptext");
     const closePopupButton = document.getElementById("closePopup");
 
     // Function to show the popup
-    function showPopup(message) {
-        popupText.textContent = message; // Set the message in the popup
+    function showPopup() {
         popup.setAttribute("id", "show"); // Show popup container
     }
 
     // Function to hide the popup
     function hidePopup() {
-        popup.removeAttribute("id");
+        popup.removeAttribute("id"); // Hide popup container
     }
 
     // Handle form submission
-    async function handleSubmit(event) {
-        event.preventDefault();
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-        // Collect form data
-        const firstName = document.getElementById("firstName").value.trim();
-        const lastName = document.getElementById("lastName").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const preferences = document.getElementById("preferences").value; // Get selected value from dropdown
+        const formData = new FormData(form);
+        const data = {
+            firstName: formData.get("firstName"),
+            lastName: formData.get("lastName"),
+            email: formData.get("email"),
+            preferences: formData.get("preferences"),
+        };
 
         // Validate form data
-        if (!firstName || !lastName || !email || !email.includes("@") || !email.includes(".")) {
-            alert("All fields are required and email must be valid.");
+        if (!data.firstName || !data.lastName || !data.email || !data.email.includes("@") || !data.email.includes(".")) {
+            alert("All fields are required, and email must be valid.");
             return;
         }
 
         try {
-            // Simulate server response
             const response = await fetch("/.netlify/functions/saveData", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ firstName, lastName, email, preferences }), // Include preferences
+                body: JSON.stringify(data),
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                // Show the popup with a success message
-                showPopup("Data saved successfully!");
-
-                // Clear the form
-                document.getElementById("firstName").value = "";
-                document.getElementById("lastName").value = "";
-                document.getElementById("email").value = "";
-                document.getElementById("preferences").value = ""; // Clear the dropdown
-            } else {
-                // Show the popup with an error message
-                showPopup(`Error: ${data.error || "Unknown error occurred"}`);
+            if (!response.ok) {
+                throw new Error("Failed to save data: " + (await response.text()));
             }
-        } catch (error) {
-            console.error("Error submitting data:", error);
-            // Show the popup with an unexpected error message
-            showPopup("An unexpected error occurred. Please try again.");
-        }
-    }
 
-    // Event listeners
-    submitButton.addEventListener("click", handleSubmit);
+            const result = await response.json();
+
+            // Show the popup if data is saved successfully
+            if (response.ok) {
+                showPopup();
+            }
+
+            // Clear the form fields
+            form.reset();
+
+            // Display a success message
+            alert(result.message || "Data saved successfully!");
+        } catch (error) {
+            console.error("Error submitting form:", error.message);
+            alert("Failed to save data. Please try again.");
+        }
+    });
+
+    // Close the popup when the close button is clicked
     closePopupButton.addEventListener("click", hidePopup);
 });

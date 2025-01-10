@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { google } = require("googleapis");
-const { OAuth2 } = google.auth;
+const fs = require("fs");
 
 // Load environment variables
 const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPREADSHEET_ID, REFRESH_TOKEN } = process.env;
@@ -10,15 +10,8 @@ if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !SPREADSHEET_ID || !REFRESH
     throw new Error("Missing required environment variables for Google OAuth.");
 }
 
-// Log the refresh token for debugging (ensure you remove this from production)
-console.log("Loaded REFRESH_TOKEN:", REFRESH_TOKEN);
-
 // OAuth2 client setup
-const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-
-// Set credentials with the refresh token (log to confirm it is set)
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-console.log("Set credentials with refresh token:", REFRESH_TOKEN);
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
 // Function to refresh the access token if expired
 async function refreshAccessToken() {
@@ -27,10 +20,13 @@ async function refreshAccessToken() {
         const { credentials } = await oAuth2Client.refreshAccessToken();
         const newAccessToken = credentials.access_token;
 
-        console.log("New access token:", newAccessToken);
-
-        // Temporarily store the new access token (it will persist in the current runtime)
+        // Store the refreshed access token temporarily
         process.env.ACCESS_TOKEN = newAccessToken;
+
+        // Save the updated access token to a temporary file
+        const tokenPath = '/tmp/token.json';
+        fs.writeFileSync(tokenPath, JSON.stringify({ access_token: newAccessToken, refresh_token: REFRESH_TOKEN }));
+        console.log("Access token refreshed and saved:", newAccessToken);
 
         return newAccessToken;
     } catch (error) {
@@ -73,21 +69,21 @@ async function saveDataToGoogleSheets(data) {
 
 // Netlify serverless function handler
 exports.handler = async function(event, context) {
-    console.log("Incoming request:", event); // Log the incoming request
-
     try {
-        const data = JSON.parse(event.body || "{}");
-        console.log("Parsed request body:", data); // Log parsed data
+        // Assuming the data comes in a POST request body
+        const data = JSON.parse(event.body);
 
+        // Call the function to save data to Google Sheets
         await saveDataToGoogleSheets(data);
 
+        // Respond with success message
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Data saved successfully" }),
         };
     } catch (error) {
-        console.error("Error handling request:", error);
-
+        // Respond with error message and detailed logging
+        console.error("Error handling request:", error.message);
         return {
             statusCode: 500,
             body: JSON.stringify({ error: error.message, stack: error.stack }),

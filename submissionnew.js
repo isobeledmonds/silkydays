@@ -1,11 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitButton");
     const popup = document.querySelector(".popup");
-    const popuptext = document.querySelector(".popuptext");
+    const popupText = document.querySelector(".popuptext");
     const closePopupButton = document.getElementById("closePopup");
 
     // Function to show the popup
-    function showPopup() {
+    function showPopup(message) {
+        popupText.textContent = message; // Set the message in the popup
         popup.setAttribute("id", "show"); // Show popup container
     }
 
@@ -41,8 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             if (response.ok) {
-                // Show the popup
-                showPopup();
+                // Show the popup with a success message
+                showPopup("Data saved successfully!");
 
                 // Clear the form
                 document.getElementById("firstName").value = "";
@@ -50,11 +51,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("email").value = "";
                 document.getElementById("preferences").value = ""; // Clear the dropdown
             } else {
-                alert(`Error: ${data.error || "Unknown error occurred"}`);
+                // Show the popup with an error message
+                showPopup(`Error: ${data.error || "Unknown error occurred"}`);
             }
         } catch (error) {
             console.error("Error submitting data:", error);
-            alert("An unexpected error occurred. Please try again.");
+            // Show the popup with an unexpected error message
+            showPopup("An unexpected error occurred. Please try again.");
         }
     }
 

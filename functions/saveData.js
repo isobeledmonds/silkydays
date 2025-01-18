@@ -4,26 +4,35 @@ const fs = require("fs");
 const path = require("path");
 const { OAuth2 } = google.auth;
 
-// Load environment variables
-const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SPREADSHEET_ID, REFRESH_TOKEN } = process.env;
+const {
+    CLIENT_ID,
+    CLIENT_SECRET,
+    REDIRECT_URI,
+    SPREADSHEET_ID,
+    REFRESH_TOKEN
+} = process.env;
 
-// OAuth2 client setup
 const TOKEN_PATH = path.resolve("/tmp/token.json");
 const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-// Initialize or load tokens
+// Initialize token
 function initializeToken() {
     const token = {
         refresh_token: REFRESH_TOKEN,
         scope: ["https://www.googleapis.com/auth/spreadsheets"].join(" "),
         token_type: "Bearer",
-        expiry_date: Date.now() + 3600 * 1000, // Valid for 1 hour
+        expiry_date: Date.now() + 3600 * 1000,
     };
-    oAuth2Client.setCredentials(token);
-    fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
-    console.log("Initialized token and saved to /tmp/token.json");
+    try {
+        oAuth2Client.setCredentials(token);
+        fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
+        console.log("Initialized token and saved to /tmp/token.json");
+    } catch (error) {
+        console.error("Failed to initialize token:", error.message);
+    }
 }
 
+// Load token or initialize if not found
 if (fs.existsSync(TOKEN_PATH)) {
     try {
         const token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf8"));
@@ -38,14 +47,13 @@ if (fs.existsSync(TOKEN_PATH)) {
     initializeToken();
 }
 
-// Refresh token if expired
+// Refresh the access token
 async function refreshAccessToken() {
     try {
         console.log("Refreshing access token...");
         const { credentials } = await oAuth2Client.refreshAccessToken();
         oAuth2Client.setCredentials(credentials);
 
-        // Save updated token to file
         fs.writeFileSync(TOKEN_PATH, JSON.stringify(credentials));
         console.log("Access token refreshed and saved:", credentials);
 
@@ -59,9 +67,12 @@ async function refreshAccessToken() {
 // Save data to Google Sheets
 async function saveDataToGoogleSheets(data) {
     try {
+        if (!data.firstName || !data.lastName || !data.email || !data.preferences) {
+            throw new Error("Invalid data: Missing required fields.");
+        }
+
         const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
 
-        // Refresh token if expired
         const token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf8"));
         if (Date.now() >= token.expiry_date) {
             await refreshAccessToken();
@@ -92,6 +103,9 @@ exports.handler = async function (event) {
         }
 
         const data = JSON.parse(event.body);
+
+        console.log("Received data:", data); // Debug incoming data
+
         await saveDataToGoogleSheets(data);
 
         return { statusCode: 200, body: JSON.stringify({ message: "Data saved successfully" }) };

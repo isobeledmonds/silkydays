@@ -12,7 +12,7 @@ const {
     REFRESH_TOKEN
 } = process.env;
 
-const TOKEN_PATH = path.resolve("/tmp/token.json");
+const TOKEN_PATH = '/tmp/token.json';
 const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
 // Initialize token

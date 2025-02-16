@@ -7,25 +7,34 @@ exports.handler = async (event) => {
     }
 
     try {
+        console.log("🔍 Processing submission...");
+
+        // Retrieve Zapier webhook URL from environment variables
+        const ZAPIER_WEBHOOK_URL = process.env.ZAPIER_WEBHOOK_URL;
+
+        if (!ZAPIER_WEBHOOK_URL) {
+            console.error("❌ Zapier webhook URL is not set in environment variables.");
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: "Server configuration error" }),
+            };
+        }
+
+        console.log("✅ ZAPIER_WEBHOOK_URL found");
+
+        // Parse request body
         const { firstName, lastName, email, preferences } = JSON.parse(event.body);
 
         // Validation check
         if (!firstName || !lastName || !email || !preferences) {
+            console.error("❌ Missing required fields");
             return {
                 statusCode: 400,
                 body: JSON.stringify({ message: "Missing required fields" }),
             };
         }
 
-        // Get the Zapier Webhook URL from environment variables
-        const ZAPIER_WEBHOOK_URL = process.env.ZAPIER_WEBHOOK_URL;
-
-        // Debugging log to check if the env variable is being read
-        console.log("🔍 ZAPIER_WEBHOOK_URL:", ZAPIER_WEBHOOK_URL ? "FOUND" : "NOT FOUND");
-
-        if (!ZAPIER_WEBHOOK_URL) {
-            throw new Error("Zapier webhook URL is not set in environment variables.");
-        }
+        console.log("📤 Sending data to Zapier...");
 
         // Send data to Zapier
         const response = await fetch(ZAPIER_WEBHOOK_URL, {
@@ -38,12 +47,14 @@ exports.handler = async (event) => {
             throw new Error(`Zapier Webhook failed: ${response.statusText}`);
         }
 
+        console.log("✅ Data successfully sent to Zapier");
+
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Data successfully sent to Zapier" }),
         };
     } catch (error) {
-        console.error("❌ Error submitting data:", error);
+        console.error("🚨 Error submitting data:", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ message: "Failed to submit data" }),

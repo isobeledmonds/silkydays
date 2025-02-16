@@ -9,7 +9,6 @@ exports.handler = async (event) => {
     try {
         const { firstName, lastName, email, preferences } = JSON.parse(event.body);
 
-        // Validation check
         if (!firstName || !lastName || !email || !preferences) {
             return {
                 statusCode: 400,
@@ -17,15 +16,14 @@ exports.handler = async (event) => {
             };
         }
 
-        // Get the Zapier webhook URL from environment variables
-        const ZAPIER_WEBHOOK_URL = process.env.ZAPIER_WEBHOOK_URL;
+        // Debug: Log environment variable
+        console.log("🔍 ZAPIER_WEBHOOK_URL:", process.env.ZAPIER_WEBHOOK_URL);
 
-        if (!ZAPIER_WEBHOOK_URL) {
+        if (!process.env.ZAPIER_WEBHOOK_URL) {
             throw new Error("Zapier webhook URL is not set in environment variables.");
         }
 
-        // Send data to Zapier
-        const response = await fetch(ZAPIER_WEBHOOK_URL, {
+        const response = await fetch(process.env.ZAPIER_WEBHOOK_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ firstName, lastName, email, preferences }),
@@ -40,10 +38,10 @@ exports.handler = async (event) => {
             body: JSON.stringify({ message: "Data successfully sent to Zapier" }),
         };
     } catch (error) {
-        console.error("Error submitting data:", error);
+        console.error("🔥 Error submitting data:", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: "Failed to submit data" }),
+            body: JSON.stringify({ message: "Failed to submit data", error: error.message }),
         };
     }
 };

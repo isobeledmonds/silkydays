@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // Simulate server response
-            const response = await fetch("/.netlify/functions/saveData", {
+            const response = await fetch("/.netlify/functions/submit", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ firstName, lastName, email, preferences }), // Include preferences

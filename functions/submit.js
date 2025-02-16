@@ -17,8 +17,12 @@ exports.handler = async (event) => {
             };
         }
 
-        // Replace with your Zapier Webhook URL
-        const ZAPIER_WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/21064230/2w9ap79/"; 
+        // Get the Zapier webhook URL from environment variables
+        const ZAPIER_WEBHOOK_URL = process.env.ZAPIER_WEBHOOK_URL;
+
+        if (!ZAPIER_WEBHOOK_URL) {
+            throw new Error("Zapier webhook URL is not set in environment variables.");
+        }
 
         // Send data to Zapier
         const response = await fetch(ZAPIER_WEBHOOK_URL, {

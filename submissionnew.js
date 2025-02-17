@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const zapierWebhookUrl = "YOUR_ZAPIER_WEBHOOK_URL"; // Replace with your actual webhook URL
+            const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL; //
 
             const response = await fetch(zapierWebhookUrl, {
                 method: "POST",

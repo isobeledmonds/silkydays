@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to show the popup
     function showPopup() {
-        popup.setAttribute("id", "show"); // Show popup container
+        popup.setAttribute("id", "show");
     }
 
     // Function to hide the popup
@@ -32,19 +32,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL; //
-
-            const response = await fetch(zapierWebhookUrl, {
+            const response = await fetch("/.netlify/functions/submit", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ firstName, lastName, email, location, instagram, preferences }),
             });
 
-            const text = await response.text(); // Read response as text first
+            const text = await response.text();
 
             let data;
             try {
-                data = JSON.parse(text); // Try parsing JSON
+                data = JSON.parse(text);
             } catch {
                 console.error("Non-JSON response from server:", text);
                 alert("An unexpected response was received. Please check your server.");
@@ -52,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (response.ok) {
-                showPopup(); // Show popup on success
+                showPopup();
 
                 // Clear form fields
                 document.getElementById("firstName").value = "";

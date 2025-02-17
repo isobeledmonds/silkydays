@@ -23,10 +23,10 @@ exports.handler = async (event) => {
         console.log("✅ ZAPIER_WEBHOOK_URL found");
 
         // Parse request body
-        const { firstName, lastName, email, preferences } = JSON.parse(event.body);
+        const { firstName, lastName, email, location, instagram, preferences } = JSON.parse(event.body);
 
         // Validation check
-        if (!firstName || !lastName || !email || !preferences) {
+        if (!firstName || !lastName || !email || !preferences || !location) {
             console.error("❌ Missing required fields");
             return {
                 statusCode: 400,
@@ -40,7 +40,7 @@ exports.handler = async (event) => {
         const response = await fetch(ZAPIER_WEBHOOK_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ firstName, lastName, email, preferences }),
+            body: JSON.stringify({ firstName, lastName, email, location, instagram, preferences }),
         });
 
         if (!response.ok) {

@@ -21,9 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const firstName = document.getElementById("firstName").value.trim();
         const lastName = document.getElementById("lastName").value.trim();
         const email = document.getElementById("email").value.trim();
-        const location = document.getElementById("locationInput").value.trim(); // Get location
-        const instagram = document.getElementById("instagram").value.trim(); // Get Instagram handle
-        const preferences = document.getElementById("preferences").value; // Get selected value from dropdown
+        const location = document.getElementById("locationInput").value.trim();
+        const instagram = document.getElementById("instagram").value.trim();
+        const preferences = document.getElementById("preferences").value;
 
         // Validate form data
         if (!firstName || !lastName || !email || !email.includes("@") || !email.includes(".") || !location || !preferences) {
@@ -32,8 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            // Send data to Zapier Webhook
-            const zapierWebhookUrl = "YOUR_ZAPIER_WEBHOOK_URL"; // Replace with your Zapier webhook URL
+            const zapierWebhookUrl = "YOUR_ZAPIER_WEBHOOK_URL"; // Replace with your actual webhook URL
 
             const response = await fetch(zapierWebhookUrl, {
                 method: "POST",
@@ -41,13 +40,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ firstName, lastName, email, location, instagram, preferences }),
             });
 
-            const data = await response.json();
+            const text = await response.text(); // Read response as text first
+
+            let data;
+            try {
+                data = JSON.parse(text); // Try parsing JSON
+            } catch {
+                console.error("Non-JSON response from server:", text);
+                alert("An unexpected response was received. Please check your server.");
+                return;
+            }
 
             if (response.ok) {
-                // Show the popup
-                showPopup();
+                showPopup(); // Show popup on success
 
-                // Clear the form
+                // Clear form fields
                 document.getElementById("firstName").value = "";
                 document.getElementById("lastName").value = "";
                 document.getElementById("email").value = "";

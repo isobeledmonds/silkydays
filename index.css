@@ -386,6 +386,7 @@ datalist option {
     .first-div,
     .second-div {
         display: block; /* Removes the inline row layout */
+        width: 100%;
     }
 }
 
@@ -393,7 +394,7 @@ datalist option {
 .second-div {
     display: flex;
     gap: 3%;
-    width: 100%;
+    width: 115%;
 }
 
 .insta {
